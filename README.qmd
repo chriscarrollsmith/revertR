@@ -1,0 +1,158 @@
+---
+title: "README"
+author: "Christopher C. Smith"
+format: gfm
+editor: visual
+---
+
+# revertR
+
+## Introduction
+
+`revertR` is an R package for forecasting asset returns based on momentum and mean-reversion effects. The package has basically two core modules:
+
+1.  An analysis module, and
+
+2.  A forecasting module that depends on data that has been precalculated with the analysis module.
+
+The basic conceit is that you can quantify the stock price's relationship to various exponential moving averages as a z-score, and this gives you a momentum or mean reversion signal. Then, you can forecast future prices by looking at how the asset has historically performed in that z-score range.
+
+## Limitations
+
+The datasets used for pre-calculating stock price returns by z-score are full of survivorship bias, and this is probably grossly distorting the forecast numbers for individual stocks. Note that forecasts on sector and country ETFs should be less biased by survivorship, and perhaps even bias-free. At some point I'd like to repeat the analysis for individual stocks with a survivorship-free dataset.
+
+Secondly, historical returns are no guarantee of future returns, and I haven't yet built estimates of variability into my forecasting functions.
+
+## Installation
+
+To install `revertR`, use:
+
+```{r eval=FALSE}
+devtools::install_github("chriscarrollsmith/revertR")
+```
+
+## Analysis
+
+The revertR package is meant to be used in combination with the `tidyverse` and `tidyquant` packages. I also recommend disabling scientific notation.
+
+```{r message=FALSE}
+library(tidyverse)
+library(tidyquant)
+library(revertR)
+options(scipen = 999)
+```
+
+To fetch and prep historical price data for the S&P 500, we use the `tidyquant` function `tq_index` to get a list of S&P 500 tickers, and then we call `prep_data_for_analysis` with the `tickers`. This will add exponential moving averages (of period lengths set by the `periods` argument), calculate the rolling 2-year (as controlled by `window_size_to_use_in_years`) beta vs. the S&P 500 (controlled by `benchmark_index_ticker`), calculate the current price's distance from each EMA as a 2-year z-score, and calculate the 20-day trailing moving average of that z-score.
+
+```{r message=FALSE}
+# S&P 500 (Large Cap) -----------------------------------------------------
+
+# Get and clean S&P 500 tickers
+tickers <- tq_index("SP500") %>%
+  filter(symbol != "-") %>%
+  pull(symbol)
+
+# Get data frame of price history and prep for analysis. Use 20-day return periods,
+# a 20-day moving average of z-scores, and a 2-year window for calculating beta.
+# Use the S&P 500 as the benchmark for calculating beta.
+df <- prep_data_for_analysis(tickers,
+                             periods = c(20, 50, 100, 200, 500, 1000),
+                             return_periods = c(20),
+                             ma_period_to_use = 20,
+                             window_size_to_use_in_years = 2,
+                             benchmark_index_ticker = "^GSPC",
+                             include_today=FALSE)
+```
+
+After that, we split the data with `time_series_split`, omitting 20 rows (`n_of_rows_to_omit`) between the two series to mitigate overlap in the outcome variables. (A 1000-day gap would be ideal, but we don't have enough data.) Then we can use `calculate_correlations` to see at a glance how z-score variables relate to returns.
+
+```{r}
+# Split the series for machine learning
+split_result <- time_series_split(df, as.Date("2020-01-01"), n_of_rows_to_omit = 20)
+train_set <- split_result[[1]]
+test_set <- split_result[[2]]
+
+# Calculate correlation coefficients
+calculate_correlations(train_set)
+```
+
+Next, we will stratify by rounded current-day z-score, moving average of z-score, and difference between the two, and then run linear regressions on the different strata. (In the third model we will double-stratify by both moving average and difference.) We will save the data to file for later use in forecasting. (It saves in the "data" folder of the current working directory.)
+
+```{r}
+# Calculate three different linear models, using three different approaches to
+# stratifying price by z-score, and save data to file
+plotdata <- compute_linear_models_by_z_score_stratum(train_set,
+                                                     periods = c(20, 50, 100, 200, 500, 1000),
+                                                     return_periods = rep(20,6),
+                                                     filename_prefix = "sp500")
+```
+
+With that done, we can plot the results for our different models. Note that the plots are faceted by the period of the moving average used in the analysis.
+
+```{r message=FALSE}
+# Asset description to use in plot titles
+asset_description <- "an S&P 500 stock"
+
+# Plot results for current-day z-score
+plot_results(plotdata[[1]], "z_score_stratum", asset_description)
+
+# Plot results for 20-day moving average of z-score
+plot_results(plotdata[[2]], "moving_average_z_score_stratum", asset_description)
+
+# Plot results for difference between current-day z-score and 20-day moving average of z-score
+plot_results_ds(plotdata[[3]], "moving_average_z_score_stratum", "diff_z_score_stratum", asset_description, period = 20)
+```
+
+Finally, we can get a quick statistical summary of each linear model. How many trade opportunities does it give us that beat a 0.008% daily expected return threshold, and what's the average daily return on those trades for the duration of the 20-day holding period?
+
+```{r}
+#calculate potential return per trade and number of trade opportunities by strategy
+map2_dfr(.x = plotdata,
+         .y = c("z-score","ma of z-score","double-strat"),
+         .f = trade_potential) %>%
+  group_by(strategy) %>%
+  summarize(mean_return = sum(avg_potential_return*n_of_trades)/sum(n_of_trades),
+            n_of_trades = sum(n_of_trades))
+```
+
+We can repeat the above analysis for other indices and asset classes---for instance, the S&P 600. Note that the mean reversion and momentum effects are much higher for these "small-cap" stocks; however, also note that there is likely stronger survivorship bias for the S&P 600, so this is partly just noise. Also, these stocks have higher beta (volatility) in general. Analysis of sector, country, bond, or commodities ETFs should be less affected by survivorship bias, since these rarely go to zero. However, note that that are some exceptions, as with Russia ETFs at the onset of the Ukraine war.
+
+An [analysis_worksheet](analysis_worksheet.qmd) is provided for comprehensive analysis of various asset classes.
+
+## Forecasting
+
+Note that by default, today's prices are not included in fetched data. To include today's prices in the analysis, you must obtain a free API key from Alphanvatage and set the environment variable `ALPHAVANTAGE_API_KEY` using the command `Sys.setenv(ALPHAVANTAGE_API_KEY="<your_api_key>")`.
+
+```{r}
+# Fetch and prep S&P 500 data
+tickers <- tq_index("SP500",use_fallback=TRUE) %>% filter(symbol != "-") %>% pull(symbol)
+df <- prep_data_for_forecasting(tickers, periods, include_today=FALSE)
+```
+
+To run the analysis to forecast returns from the most recent closing price, you should load one of the pre-calculated S&P 500 plotdata data frames using `data`. I recommend using the double-stratified data frame, `sp500DSplotdata`. Alternatively, you can use the single-stratified data frames, `sp500plotdata` or `sp500MAplotdata`.
+
+You will pass your S&P 500 prices data frame to `analyze_data` as the first argument, and the plotdata data frame as the second argument. You must also indicate the strata to be used for the analysis. For single-stratified plotdata, you will use "z_score_stratum" for the third argument, leaving the fourth argument to its default `NULL` value. For double-stratified data, you will use "z_score_stratum" as the third argument and "diff_stratum" as the fourth. (Calling this function will be simplified in future versions of the package.)
+
+```{r}
+# Forecast returns
+data(sp500DSplotdata, package="revertR")
+sp500_forecasts <- analyze_data(df, sp500DSplotdata, "z_score_stratum", "diff_stratum")
+```
+
+Once we have our data frame of return forecasts (represented as average expected daily return over the next 12 months), we can use `classify_investment_thesis` to group the forecasts by whether they represent more of a mean-reversion or momentum strategy, and over what term. However, note that these categories are fuzzy, and many forecasts are premised on a combination of momentum and mean-reversion effects.
+
+```{r}
+#Classify and filter double strat results
+classify_investment_thesis(sp500_forecasts) %>%
+  group_by(type) %>%
+  arrange(desc(average_expected_return)) %>%
+  filter(row_number()<4) %>%
+  select(symbol,average_expected_return,type) %>%
+  print()
+```
+
+In addition to the S&P 500, revertR supports forecasting over several other asset classes, including stocks of the S&P 600 index and selected sector, country, and bond ETFs. (To analyze other assets besides these, you will need to calculate your own plotdata.)
+
+For comprehensive screening and forecasting of the various supported asset classes, see the provided [forecasting_worksheet](/forecasting_worksheet.qmd) file.
+
+### 

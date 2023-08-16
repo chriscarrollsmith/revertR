@@ -1,0 +1,13 @@
+Package: revertR
+Title: Mean Reversion- and Momentum-Based Asset Return Forecaster
+Version: 0.0.0.1
+Authors@R: 
+    person("Christopher", "Smith", , "christopher.smith@promptlytechnologies.com", role = c("aut", "cre"))
+Description: This package introduces a set of novel financial indicators that allow for quantifying momentum and mean reversion signals in terms of an asset price's distance from its major exponential moving averages, expressed as a z-score. Through the use of stratification and linear regression, it also allows for generating forecasts of future price returns.
+License: use_proprietary_license()
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.2.3
+Depends: 
+    R (>= 2.10)
+LazyData: true
