@@ -26,7 +26,7 @@ It uses the \code{calculate_linear_coefficients} function for these computations
 }
 \examples{
 \dontrun{
-  compute_linear_models_by_z_score_stratum(df, filename_prefix = "sp500")
+  compute_linear_models_by_z_score_stratum(df, filename_prefix = "sp500_")
 }
 }
 \seealso{

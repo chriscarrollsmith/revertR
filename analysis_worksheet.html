@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.353">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Christopher C. Smith">
+
+<title>Analysis worksheet</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="analysis_worksheet_files/libs/clipboard/clipboard.min.js"></script>
+<script src="analysis_worksheet_files/libs/quarto-html/quarto.js"></script>
+<script src="analysis_worksheet_files/libs/quarto-html/popper.min.js"></script>
+<script src="analysis_worksheet_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="analysis_worksheet_files/libs/quarto-html/anchor.min.js"></script>
+<link href="analysis_worksheet_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="analysis_worksheet_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="analysis_worksheet_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="analysis_worksheet_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="analysis_worksheet_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+
+
+</head>
+
+<body class="fullcontent">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Analysis worksheet</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Christopher C. Smith </p>
+          </div>
+  </div>
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<section id="comprehensive-asset-analysis-worksheet" class="level1">
+<h1>Comprehensive asset analysis worksheet</h1>
+<p>This worksheet is designed for comprehensive analysis of momentum and mean reversion effects in various asset classes, using novel indicators that quantify mean reversion and momentum in terms of the price’s z-score relationship to its exponential moving averages. Note that many model parameters can be adjusted. Run all cells in the document to complete the analysis. In addition to rendering plots and figures, this will also save plot data in the folder <a href="/data">/data</a>.</p>
+<p>This library and worksheet are works in progress. I have split the data for machine learning, but I have not yet attempted to validate the training results on the test data. I would also like to try some more traditional machine learning algorithms, like maybe a k-nearest neighbors (knn) algorithm. I also want to make use of my beta variable and add some additional variables, such as percentile rank and index-level z-score.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyquant)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(revertR)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">options</span>(<span class="at">scipen =</span> <span class="dv">999</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="sp-500" class="level2">
+<h2 class="anchored" data-anchor-id="sp-500">S&amp;P 500</h2>
+<p>Analysis of S&amp;P 500 stocks reveals that mean reversion works best on short timeframes (20-day EMAs with 20-day returns), and momentum works best on long timeframes (1000-day EMAs with 1000-day returns). It also suggests that mean-reversion effects are stronger than momentum effects, though that may just be noise from survivorship bias.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># S&amp;P 500 (Large Cap) -----------------------------------------------------</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Get and clean S&amp;P 500 tickers</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>tickers <span class="ot">&lt;-</span> <span class="fu">tq_index</span>(<span class="st">"SP500"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(symbol <span class="sc">!=</span> <span class="st">"-"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pull</span>(symbol)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Getting holdings for SP500</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Get data frame of price history and prep for analysis. Use 20-day return periods,</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="co"># a 20-day moving average of z-scores, and a 2-year window for calculating beta.</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Use the S&amp;P 500 as the benchmark for calculating beta.</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">prep_data_for_analysis</span>(tickers,</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>                             <span class="at">periods =</span> <span class="fu">c</span>(<span class="dv">20</span>, <span class="dv">50</span>, <span class="dv">100</span>, <span class="dv">200</span>, <span class="dv">500</span>, <span class="dv">1000</span>),</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>                             <span class="at">return_periods =</span> <span class="fu">c</span>(<span class="dv">20</span>),</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>                             <span class="at">ma_period_to_use =</span> <span class="dv">20</span>,</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>                             <span class="at">window_size_to_use_in_years =</span> <span class="dv">2</span>,</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>                             <span class="at">benchmark_index_ticker =</span> <span class="st">"^GSPC"</span>,</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>                             <span class="at">include_today=</span><span class="cn">FALSE</span>)</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Split the series for machine learning</span></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>split_result <span class="ot">&lt;-</span> <span class="fu">time_series_split</span>(df, <span class="fu">as.Date</span>(<span class="st">"2020-01-01"</span>), <span class="at">n_of_rows_to_omit =</span> <span class="dv">20</span>)</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>train_set <span class="ot">&lt;-</span> split_result[[<span class="dv">1</span>]]</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>test_set <span class="ot">&lt;-</span> split_result[[<span class="dv">2</span>]]</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate correlation coefficients</span></span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a><span class="fu">calculate_correlations</span>(train_set)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>               return_20
+z_score_20   -0.06398647
+z_score_50   -0.07177124
+z_score_100  -0.06730565
+z_score_200  -0.05213214
+z_score_500  -0.04203315
+z_score_1000 -0.06092751</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate three different linear models, using three different approaches to</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="co"># stratifying price by z-score, and save data to file</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>plotdata <span class="ot">&lt;-</span> <span class="fu">compute_linear_models_by_z_score_stratum</span>(train_set,</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>                                                     <span class="at">periods =</span> <span class="fu">c</span>(<span class="dv">20</span>, <span class="dv">50</span>, <span class="dv">100</span>, <span class="dv">200</span>, <span class="dv">500</span>, <span class="dv">1000</span>),</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>                                                     <span class="at">return_periods =</span> <span class="fu">rep</span>(<span class="dv">20</span>,<span class="dv">6</span>),</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>                                                     <span class="at">filename_prefix =</span> <span class="st">"sp500_"</span>)</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Asset description to use in plot titles</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>asset_description <span class="ot">&lt;-</span> <span class="st">"an S&amp;P 500 stock"</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot results for current-day z-score</span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_results</span>(plotdata[[<span class="dv">1</span>]], <span class="st">"z_score_stratum"</span>, asset_description)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="analysis_worksheet_files/figure-html/unnamed-chunk-2-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot results for 20-day moving average of z-score</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_results</span>(plotdata[[<span class="dv">2</span>]], <span class="st">"moving_average_z_score_stratum"</span>, asset_description)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="analysis_worksheet_files/figure-html/unnamed-chunk-2-2.png" class="img-fluid" width="672"></p>
+</div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot results for difference between current-day z-score and 20-day moving average of z-score</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_results_ds</span>(plotdata[[<span class="dv">3</span>]], <span class="st">"moving_average_z_score_stratum"</span>, <span class="st">"diff_z_score_stratum"</span>, asset_description, <span class="at">period =</span> <span class="dv">20</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="analysis_worksheet_files/figure-html/unnamed-chunk-2-3.png" class="img-fluid" width="672"></p>
+</div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co">#calculate potential return per trade and number of trade opportunities by strategy</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="fu">map2_dfr</span>(<span class="at">.x =</span> plotdata,</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>         <span class="at">.y =</span> <span class="fu">c</span>(<span class="st">"z-score"</span>,<span class="st">"ma of z-score"</span>,<span class="st">"double-strat"</span>),</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>         <span class="at">.f =</span> trade_potential) <span class="sc">%&gt;%</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(strategy) <span class="sc">%&gt;%</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">mean_return =</span> <span class="fu">sum</span>(avg_potential_return<span class="sc">*</span>n_of_trades)<span class="sc">/</span><span class="fu">sum</span>(n_of_trades),</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>            <span class="at">n_of_trades =</span> <span class="fu">sum</span>(n_of_trades))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 3 × 3
+  strategy      mean_return n_of_trades
+  &lt;chr&gt;               &lt;dbl&gt;       &lt;int&gt;
+1 double-strat     0.00101       243298
+2 ma of z-score    0.00102       217480
+3 z-score          0.000970      254825</code></pre>
+</div>
+</div>
+</section>
+<section id="sp-600" class="level2">
+<h2 class="anchored" data-anchor-id="sp-600">S&amp;P 600</h2>
+<p>Note that the mean reversion and momentum effects are much higher for these “small-cap” stocks; however, also note that there is likely stronger survivorship bias for the S&amp;P 600, so this is partly just noise. Also, these stocks have higher beta (volatility) in general.</p>
+<div class="cell" data-messages="false" data-warnings="false">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># S&amp;P 600 (Small Cap) -----------------------------------------------------</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Get S&amp;P 600 tickers</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>tickers <span class="ot">&lt;-</span> <span class="fu">tq_index</span>(<span class="st">"SP600"</span>, <span class="at">use_fallback=</span><span class="cn">TRUE</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(symbol <span class="sc">!=</span> <span class="st">"-"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pull</span>(symbol)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Using fallback dataset last downloaded 2019-10-11.</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Get data frame of price history and prep for analysis. Use 20-day return periods,</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="co"># a 20-day moving average of z-scores, and a 2-year window for calculating beta.</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Use the S&amp;P 500 as the benchmark for calculating beta.</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">prep_data_for_analysis</span>(tickers,</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>                             <span class="at">periods =</span> <span class="fu">c</span>(<span class="dv">20</span>, <span class="dv">50</span>, <span class="dv">100</span>, <span class="dv">200</span>, <span class="dv">500</span>, <span class="dv">1000</span>),</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>                             <span class="at">return_periods =</span> <span class="fu">c</span>(<span class="dv">20</span>),</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>                             <span class="at">ma_period_to_use =</span> <span class="dv">20</span>,</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>                             <span class="at">window_size_to_use_in_years =</span> <span class="dv">2</span>,</span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>                             <span class="at">benchmark_index_ticker =</span> <span class="st">"^GSPC"</span>,</span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>                             <span class="at">include_today=</span><span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: There were 119 warnings in `dplyr::mutate()`.
+The first warning was:
+ℹ In argument: `data.. = purrr::map(...)`.
+Caused by warning:
+! x = 'CCMP', get = 'stock.prices': Error in getSymbols.yahoo(Symbols = "CCMP", env = &lt;environment&gt;, verbose = FALSE, : Unable to import "CCMP".
+HTTP error 404.
+ Removing CCMP.
+ℹ Run `dplyr::last_dplyr_warnings()` to see the 118 remaining warnings.</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "Symbol(s) GME excluded from result due to &lt; -95% or &gt; 1000% 20-day return (possible data quality issue)"</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Split the series for machine learning</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>split_result <span class="ot">&lt;-</span> <span class="fu">time_series_split</span>(df, <span class="fu">as.Date</span>(<span class="st">"2020-01-01"</span>), <span class="at">n_of_rows_to_omit =</span> <span class="dv">5</span>)</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>train_set <span class="ot">&lt;-</span> split_result[[<span class="dv">1</span>]]</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>test_set <span class="ot">&lt;-</span> split_result[[<span class="dv">2</span>]]</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate correlation coefficients</span></span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a><span class="fu">calculate_correlations</span>(train_set)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>               return_20
+z_score_20   -0.04384500
+z_score_50   -0.04282848
+z_score_100  -0.04055939
+z_score_200  -0.03394504
+z_score_500  -0.03369510
+z_score_1000 -0.04116108</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate three different linear models, using three different approaches to</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="co"># stratifying price by z-score, and save data to file</span></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>plotdata <span class="ot">&lt;-</span> <span class="fu">compute_linear_models_by_z_score_stratum</span>(train_set,</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>                                                     <span class="at">periods =</span> <span class="fu">c</span>(<span class="dv">20</span>, <span class="dv">50</span>, <span class="dv">100</span>, <span class="dv">200</span>, <span class="dv">500</span>, <span class="dv">1000</span>),</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>                                                     <span class="at">return_periods =</span> <span class="fu">rep</span>(<span class="dv">20</span>,<span class="dv">6</span>),</span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>                                                     <span class="at">filename_prefix =</span> <span class="st">"sp600_"</span>)</span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Asset description to use in plot titles</span></span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>asset_description <span class="ot">&lt;-</span> <span class="st">"an S&amp;P 600 stock"</span></span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot results for current-day z-score</span></span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_results</span>(plotdata[[<span class="dv">1</span>]], <span class="st">"z_score_stratum"</span>, asset_description)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="analysis_worksheet_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot results for 20-day moving average of z-score</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_results</span>(plotdata[[<span class="dv">2</span>]], <span class="st">"moving_average_z_score_stratum"</span>, asset_description)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="analysis_worksheet_files/figure-html/unnamed-chunk-3-2.png" class="img-fluid" width="672"></p>
+</div>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot results for difference between current-day z-score and 20-day moving average of z-score</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_results_ds</span>(plotdata[[<span class="dv">3</span>]], <span class="st">"moving_average_z_score_stratum"</span>, <span class="st">"diff_z_score_stratum"</span>, asset_description, <span class="at">period =</span> <span class="dv">20</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="analysis_worksheet_files/figure-html/unnamed-chunk-3-3.png" class="img-fluid" width="672"></p>
+</div>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co">#calculate potential return per trade and number of trade opportunities by strategy</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="fu">map2_dfr</span>(<span class="at">.x =</span> plotdata,</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>         <span class="at">.y =</span> <span class="fu">c</span>(<span class="st">"z-score"</span>,<span class="st">"ma of z-score"</span>,<span class="st">"double-strat"</span>),</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>         <span class="at">.f =</span> trade_potential) <span class="sc">%&gt;%</span></span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(strategy) <span class="sc">%&gt;%</span></span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">mean_return =</span> <span class="fu">sum</span>(avg_potential_return<span class="sc">*</span>n_of_trades)<span class="sc">/</span><span class="fu">sum</span>(n_of_trades),</span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>            <span class="at">n_of_trades =</span> <span class="fu">sum</span>(n_of_trades))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 3 × 3
+  strategy      mean_return n_of_trades
+  &lt;chr&gt;               &lt;dbl&gt;       &lt;int&gt;
+1 double-strat     0.00104       169578
+2 ma of z-score    0.000959      195564
+3 z-score          0.000924      234660</code></pre>
+</div>
+</div>
+</section>
+<section id="sector-etfs" class="level2">
+<h2 class="anchored" data-anchor-id="sector-etfs">Sector ETFs</h2>
+<p>An analysis of US equal-weight sector ETFs should be less affected by survivorship bias, and thus more accurate. Note that these assets exhibit smaller effect sizes than we found in our analysis of individual stocks.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Sector ETFs -----------------------------------------------------------------</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>tickers <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"XLRE"</span>,<span class="st">"XLY"</span>,<span class="st">"XLI"</span>,<span class="st">"XLB"</span>,<span class="st">"XLE"</span>,<span class="st">"XLF"</span>,<span class="st">"XLP"</span>,<span class="st">"XLV"</span>,<span class="st">"XLU"</span>,<span class="st">"XAR"</span>,<span class="st">"XBI"</span>,<span class="st">"XHB"</span>,<span class="st">"XME"</span>,<span class="st">"XTL"</span>,<span class="st">"XTN"</span>,<span class="st">"XSW"</span>,<span class="st">"XSD"</span>,<span class="st">"XLK"</span>,<span class="st">"XLC"</span>,<span class="st">"XRT"</span>,<span class="st">"KRE"</span>,<span class="st">"XES"</span>,<span class="st">"XOP"</span>,<span class="st">"KIE"</span>,<span class="st">"XWEB"</span>,<span class="st">"XPH"</span>,<span class="st">"XHS"</span>,<span class="st">"XHE"</span>)</span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Get data frame of price history and prep for analysis. Use 20-day return periods,</span></span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a><span class="co"># a 20-day moving average of z-scores, and a 2-year window for calculating beta.</span></span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Use the S&amp;P 500 as the benchmark for calculating beta.</span></span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">prep_data_for_analysis</span>(tickers,</span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a>                             <span class="at">periods =</span> <span class="fu">c</span>(<span class="dv">20</span>, <span class="dv">50</span>, <span class="dv">100</span>, <span class="dv">200</span>, <span class="dv">500</span>, <span class="dv">1000</span>),</span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a>                             <span class="at">return_periods =</span> <span class="fu">c</span>(<span class="dv">20</span>),</span>
+<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a>                             <span class="at">ma_period_to_use =</span> <span class="dv">20</span>,</span>
+<span id="cb23-12"><a href="#cb23-12" aria-hidden="true" tabindex="-1"></a>                             <span class="at">window_size_to_use_in_years =</span> <span class="dv">2</span>,</span>
+<span id="cb23-13"><a href="#cb23-13" aria-hidden="true" tabindex="-1"></a>                             <span class="at">benchmark_index_ticker =</span> <span class="st">"^GSPC"</span>,</span>
+<span id="cb23-14"><a href="#cb23-14" aria-hidden="true" tabindex="-1"></a>                             <span class="at">include_today=</span><span class="cn">FALSE</span>)</span>
+<span id="cb23-15"><a href="#cb23-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-16"><a href="#cb23-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Split the series for machine learning</span></span>
+<span id="cb23-17"><a href="#cb23-17" aria-hidden="true" tabindex="-1"></a>split_result <span class="ot">&lt;-</span> <span class="fu">time_series_split</span>(df, <span class="fu">as.Date</span>(<span class="st">"2020-01-01"</span>), <span class="at">n_of_rows_to_omit =</span> <span class="dv">5</span>)</span>
+<span id="cb23-18"><a href="#cb23-18" aria-hidden="true" tabindex="-1"></a>train_set <span class="ot">&lt;-</span> split_result[[<span class="dv">1</span>]]</span>
+<span id="cb23-19"><a href="#cb23-19" aria-hidden="true" tabindex="-1"></a>test_set <span class="ot">&lt;-</span> split_result[[<span class="dv">2</span>]]</span>
+<span id="cb23-20"><a href="#cb23-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-21"><a href="#cb23-21" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate correlation coefficients</span></span>
+<span id="cb23-22"><a href="#cb23-22" aria-hidden="true" tabindex="-1"></a><span class="fu">calculate_correlations</span>(train_set)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>               return_20
+z_score_20   -0.09264913
+z_score_50   -0.10012360
+z_score_100  -0.09176182
+z_score_200  -0.06901885
+z_score_500  -0.06844163
+z_score_1000 -0.13895737</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate three different linear models, using three different approaches to</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="co"># stratifying price by z-score, and save data to file</span></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>plotdata <span class="ot">&lt;-</span> <span class="fu">compute_linear_models_by_z_score_stratum</span>(train_set,</span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>                                                     <span class="at">periods =</span> <span class="fu">c</span>(<span class="dv">20</span>, <span class="dv">50</span>, <span class="dv">100</span>, <span class="dv">200</span>, <span class="dv">500</span>, <span class="dv">1000</span>),</span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>                                                     <span class="at">return_periods =</span> <span class="fu">rep</span>(<span class="dv">20</span>,<span class="dv">6</span>),</span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>                                                     <span class="at">filename_prefix =</span> <span class="st">"sectors_"</span>)</span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Asset description to use in plot titles</span></span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a>asset_description <span class="ot">&lt;-</span> <span class="st">"an equal-weight sector ETF"</span></span>
+<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot results for current-day z-score</span></span>
+<span id="cb25-12"><a href="#cb25-12" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_results</span>(plotdata[[<span class="dv">1</span>]], <span class="st">"z_score_stratum"</span>, asset_description)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="analysis_worksheet_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot results for 20-day moving average of z-score</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_results</span>(plotdata[[<span class="dv">2</span>]], <span class="st">"moving_average_z_score_stratum"</span>, asset_description)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="analysis_worksheet_files/figure-html/unnamed-chunk-4-2.png" class="img-fluid" width="672"></p>
+</div>
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot results for difference between current-day z-score and 20-day moving average of z-score</span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_results_ds</span>(plotdata[[<span class="dv">3</span>]], <span class="st">"moving_average_z_score_stratum"</span>, <span class="st">"diff_z_score_stratum"</span>, asset_description, <span class="at">period =</span> <span class="dv">20</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="analysis_worksheet_files/figure-html/unnamed-chunk-4-3.png" class="img-fluid" width="672"></p>
+</div>
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co">#calculate potential return per trade and number of trade opportunities by strategy</span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a><span class="fu">map2_dfr</span>(<span class="at">.x =</span> plotdata,</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>         <span class="at">.y =</span> <span class="fu">c</span>(<span class="st">"z-score"</span>,<span class="st">"ma of z-score"</span>,<span class="st">"double-strat"</span>),</span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>         <span class="at">.f =</span> trade_potential) <span class="sc">%&gt;%</span></span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(strategy) <span class="sc">%&gt;%</span></span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">mean_return =</span> <span class="fu">sum</span>(avg_potential_return<span class="sc">*</span>n_of_trades)<span class="sc">/</span><span class="fu">sum</span>(n_of_trades),</span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a>            <span class="at">n_of_trades =</span> <span class="fu">sum</span>(n_of_trades))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 3 × 3
+  strategy      mean_return n_of_trades
+  &lt;chr&gt;               &lt;dbl&gt;       &lt;int&gt;
+1 double-strat      0.00114        5825
+2 ma of z-score     0.00107        2532
+3 z-score           0.00120        4756</code></pre>
+</div>
+</div>
+</section>
+<section id="country-etfs" class="level2">
+<h2 class="anchored" data-anchor-id="country-etfs">Country ETFs</h2>
+<p>Country ETFs can be a bit expensive to trade due to illiquidity and high expense ratios. The expense ratios are reflected in our data, but the illiquidity (i.e.&nbsp;trade execution cost) is not.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Country ETFs -----------------------------------------------------------------</span></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>tickers <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"FLLA"</span>,<span class="st">"FLEE"</span>,<span class="st">"FLFR"</span>,<span class="st">"FLAX"</span>,<span class="st">"FLIN"</span>,<span class="st">"FLKR"</span>,<span class="st">"FLSW"</span>,<span class="st">"FLTW"</span>,<span class="st">"EWO"</span>,<span class="st">"EIRL"</span>,<span class="st">"FLMX"</span>,<span class="st">"EWN"</span>,<span class="st">"ARGT"</span>,<span class="st">"NORW"</span>,<span class="st">"GREK"</span>,<span class="st">"EUSA"</span>,<span class="st">"FLSA"</span>,<span class="st">"UAE"</span>,<span class="st">"EIS"</span>,<span class="st">"FLRU"</span>,<span class="st">"EWQ"</span>,<span class="st">"EDEN"</span>,<span class="st">"VNM"</span>,<span class="st">"FLCA"</span>,<span class="st">"EWD"</span>,<span class="st">"FLIY"</span>,<span class="st">"FLZA"</span>,<span class="st">"FLGB"</span>,<span class="st">"FLAU"</span>,<span class="st">"EWP"</span>,<span class="st">"FLHK"</span>,<span class="st">"EWS"</span>,<span class="st">"FLJP"</span>,<span class="st">"PGAL"</span>,<span class="st">"EFNL"</span>,<span class="st">"THD"</span>,<span class="st">"FLGR"</span>,<span class="st">"GXG"</span>,<span class="st">"IDX"</span>,<span class="st">"FLBR"</span>,<span class="st">"EPHE"</span>,<span class="st">"QAT"</span>,<span class="st">"TUR"</span>,<span class="st">"ECH"</span>,<span class="st">"NGE"</span>,<span class="st">"EWH"</span>,<span class="st">"ENZL"</span>,<span class="st">"EGPT"</span>,<span class="st">"EWM"</span>,<span class="st">"FLCH"</span>,<span class="st">"PAK"</span>,<span class="st">"EPU"</span>)</span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Get data frame of price history and prep for analysis. Use 20-day return periods,</span></span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a><span class="co"># a 20-day moving average of z-scores, and a 2-year window for calculating beta.</span></span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Use the S&amp;P 500 as the benchmark for calculating beta.</span></span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">prep_data_for_analysis</span>(tickers,</span>
+<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a>                             <span class="at">periods =</span> <span class="fu">c</span>(<span class="dv">20</span>, <span class="dv">50</span>, <span class="dv">100</span>, <span class="dv">200</span>, <span class="dv">500</span>, <span class="dv">1000</span>),</span>
+<span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a>                             <span class="at">return_periods =</span> <span class="fu">c</span>(<span class="dv">20</span>),</span>
+<span id="cb30-10"><a href="#cb30-10" aria-hidden="true" tabindex="-1"></a>                             <span class="at">ma_period_to_use =</span> <span class="dv">20</span>,</span>
+<span id="cb30-11"><a href="#cb30-11" aria-hidden="true" tabindex="-1"></a>                             <span class="at">window_size_to_use_in_years =</span> <span class="dv">2</span>,</span>
+<span id="cb30-12"><a href="#cb30-12" aria-hidden="true" tabindex="-1"></a>                             <span class="at">benchmark_index_ticker =</span> <span class="st">"^GSPC"</span>,</span>
+<span id="cb30-13"><a href="#cb30-13" aria-hidden="true" tabindex="-1"></a>                             <span class="at">include_today=</span><span class="cn">FALSE</span>)</span>
+<span id="cb30-14"><a href="#cb30-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-15"><a href="#cb30-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Split the series for machine learning</span></span>
+<span id="cb30-16"><a href="#cb30-16" aria-hidden="true" tabindex="-1"></a>split_result <span class="ot">&lt;-</span> <span class="fu">time_series_split</span>(df, <span class="fu">as.Date</span>(<span class="st">"2020-01-01"</span>), <span class="at">n_of_rows_to_omit =</span> <span class="dv">5</span>)</span>
+<span id="cb30-17"><a href="#cb30-17" aria-hidden="true" tabindex="-1"></a>train_set <span class="ot">&lt;-</span> split_result[[<span class="dv">1</span>]]</span>
+<span id="cb30-18"><a href="#cb30-18" aria-hidden="true" tabindex="-1"></a>test_set <span class="ot">&lt;-</span> split_result[[<span class="dv">2</span>]]</span>
+<span id="cb30-19"><a href="#cb30-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-20"><a href="#cb30-20" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate correlation coefficients</span></span>
+<span id="cb30-21"><a href="#cb30-21" aria-hidden="true" tabindex="-1"></a><span class="fu">calculate_correlations</span>(train_set)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>               return_20
+z_score_20   -0.03655610
+z_score_50   -0.03314520
+z_score_100  -0.01362289
+z_score_200   0.01330871
+z_score_500  -0.02073989
+z_score_1000 -0.02074542</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate three different linear models, using three different approaches to</span></span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a><span class="co"># stratifying price by z-score, and save data to file</span></span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>plotdata <span class="ot">&lt;-</span> <span class="fu">compute_linear_models_by_z_score_stratum</span>(train_set,</span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>                                                     <span class="at">periods =</span> <span class="fu">c</span>(<span class="dv">20</span>, <span class="dv">50</span>, <span class="dv">100</span>, <span class="dv">200</span>, <span class="dv">500</span>, <span class="dv">1000</span>),</span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>                                                     <span class="at">return_periods =</span> <span class="fu">rep</span>(<span class="dv">20</span>,<span class="dv">6</span>),</span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a>                                                     <span class="at">filename_prefix =</span> <span class="st">"countries_"</span>)</span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Asset description to use in plot titles</span></span>
+<span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a>asset_description <span class="ot">&lt;-</span> <span class="st">"an equal-weight country ETF"</span></span>
+<span id="cb32-10"><a href="#cb32-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-11"><a href="#cb32-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot results for current-day z-score</span></span>
+<span id="cb32-12"><a href="#cb32-12" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_results</span>(plotdata[[<span class="dv">1</span>]], <span class="st">"z_score_stratum"</span>, asset_description)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="analysis_worksheet_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot results for 20-day moving average of z-score</span></span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_results</span>(plotdata[[<span class="dv">2</span>]], <span class="st">"moving_average_z_score_stratum"</span>, asset_description)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="analysis_worksheet_files/figure-html/unnamed-chunk-5-2.png" class="img-fluid" width="672"></p>
+</div>
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot results for difference between current-day z-score and 20-day moving average of z-score</span></span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_results_ds</span>(plotdata[[<span class="dv">3</span>]], <span class="st">"moving_average_z_score_stratum"</span>, <span class="st">"diff_z_score_stratum"</span>, asset_description, <span class="at">period =</span> <span class="dv">20</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="analysis_worksheet_files/figure-html/unnamed-chunk-5-3.png" class="img-fluid" width="672"></p>
+</div>
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="co">#calculate potential return per trade and number of trade opportunities by strategy</span></span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a><span class="fu">map2_dfr</span>(<span class="at">.x =</span> plotdata,</span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>         <span class="at">.y =</span> <span class="fu">c</span>(<span class="st">"z-score"</span>,<span class="st">"ma of z-score"</span>,<span class="st">"double-strat"</span>),</span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>         <span class="at">.f =</span> trade_potential) <span class="sc">%&gt;%</span></span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(strategy) <span class="sc">%&gt;%</span></span>
+<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">mean_return =</span> <span class="fu">sum</span>(avg_potential_return<span class="sc">*</span>n_of_trades)<span class="sc">/</span><span class="fu">sum</span>(n_of_trades),</span>
+<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a>            <span class="at">n_of_trades =</span> <span class="fu">sum</span>(n_of_trades))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 3 × 3
+  strategy      mean_return n_of_trades
+  &lt;chr&gt;               &lt;dbl&gt;       &lt;int&gt;
+1 double-strat      0.00117        1922
+2 ma of z-score     0.00151         242
+3 z-score           0.00115        1155</code></pre>
+</div>
+</div>
+</section>
+<section id="bond-etfs" class="level2">
+<h2 class="anchored" data-anchor-id="bond-etfs">Bond ETFs</h2>
+<p>Bond ETFs exhibit lower beta and smaller volatility, so their mean reversion and momentum effects are also smaller.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Bond ETFs -----------------------------------------------------------------</span></span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>tickers <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"SPLB"</span>,<span class="st">"SPIB"</span>,<span class="st">"BSV"</span>,<span class="st">"GBF"</span>,<span class="st">"BND"</span>,<span class="st">"TIP"</span>,<span class="st">"BIL"</span>,<span class="st">"SPTI"</span>,<span class="st">"PLW"</span>,<span class="st">"SPTL"</span>,<span class="st">"PHB"</span>,<span class="st">"IGLB"</span>,<span class="st">"IGIB"</span>,<span class="st">"PFIG"</span>,<span class="st">"WIP"</span>,<span class="st">"PICB"</span>,<span class="st">"PCY"</span>,<span class="st">"BWZ"</span>,<span class="st">"BWX"</span>,<span class="st">"HYD"</span>,<span class="st">"MLN"</span>,<span class="st">"NYF"</span>,<span class="st">"ITM"</span>,<span class="st">"CMF"</span>,<span class="st">"TFI"</span>,<span class="st">"SHM"</span>,<span class="st">"CWB"</span>,<span class="st">"BKLN"</span>,<span class="st">"SPMB"</span>)</span>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Get data frame of price history and prep for analysis. Use 20-day return periods,</span></span>
+<span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a><span class="co"># a 20-day moving average of z-scores, and a 2-year window for calculating beta.</span></span>
+<span id="cb37-7"><a href="#cb37-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Use the S&amp;P 500 as the benchmark for calculating beta.</span></span>
+<span id="cb37-8"><a href="#cb37-8" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">prep_data_for_analysis</span>(tickers,</span>
+<span id="cb37-9"><a href="#cb37-9" aria-hidden="true" tabindex="-1"></a>                             <span class="at">periods =</span> <span class="fu">c</span>(<span class="dv">20</span>, <span class="dv">50</span>, <span class="dv">100</span>, <span class="dv">200</span>, <span class="dv">500</span>, <span class="dv">1000</span>),</span>
+<span id="cb37-10"><a href="#cb37-10" aria-hidden="true" tabindex="-1"></a>                             <span class="at">return_periods =</span> <span class="fu">c</span>(<span class="dv">20</span>),</span>
+<span id="cb37-11"><a href="#cb37-11" aria-hidden="true" tabindex="-1"></a>                             <span class="at">ma_period_to_use =</span> <span class="dv">20</span>,</span>
+<span id="cb37-12"><a href="#cb37-12" aria-hidden="true" tabindex="-1"></a>                             <span class="at">window_size_to_use_in_years =</span> <span class="dv">2</span>,</span>
+<span id="cb37-13"><a href="#cb37-13" aria-hidden="true" tabindex="-1"></a>                             <span class="at">benchmark_index_ticker =</span> <span class="st">"^GSPC"</span>,</span>
+<span id="cb37-14"><a href="#cb37-14" aria-hidden="true" tabindex="-1"></a>                             <span class="at">include_today=</span><span class="cn">FALSE</span>)</span>
+<span id="cb37-15"><a href="#cb37-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-16"><a href="#cb37-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Split the series for machine learning</span></span>
+<span id="cb37-17"><a href="#cb37-17" aria-hidden="true" tabindex="-1"></a>split_result <span class="ot">&lt;-</span> <span class="fu">time_series_split</span>(df, <span class="fu">as.Date</span>(<span class="st">"2020-01-01"</span>), <span class="at">n_of_rows_to_omit =</span> <span class="dv">5</span>)</span>
+<span id="cb37-18"><a href="#cb37-18" aria-hidden="true" tabindex="-1"></a>train_set <span class="ot">&lt;-</span> split_result[[<span class="dv">1</span>]]</span>
+<span id="cb37-19"><a href="#cb37-19" aria-hidden="true" tabindex="-1"></a>test_set <span class="ot">&lt;-</span> split_result[[<span class="dv">2</span>]]</span>
+<span id="cb37-20"><a href="#cb37-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-21"><a href="#cb37-21" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate correlation coefficients</span></span>
+<span id="cb37-22"><a href="#cb37-22" aria-hidden="true" tabindex="-1"></a><span class="fu">calculate_correlations</span>(train_set)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                return_20
+z_score_20   0.0440504665
+z_score_50   0.0792686219
+z_score_100  0.0709041180
+z_score_200  0.0661920017
+z_score_500  0.0260847975
+z_score_1000 0.0008491441</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate three different linear models, using three different approaches to</span></span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a><span class="co"># stratifying price by z-score, and save data to file</span></span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>plotdata <span class="ot">&lt;-</span> <span class="fu">compute_linear_models_by_z_score_stratum</span>(train_set,</span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a>                                                     <span class="at">periods =</span> <span class="fu">c</span>(<span class="dv">20</span>, <span class="dv">50</span>, <span class="dv">100</span>, <span class="dv">200</span>, <span class="dv">500</span>, <span class="dv">1000</span>),</span>
+<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a>                                                     <span class="at">return_periods =</span> <span class="fu">rep</span>(<span class="dv">20</span>,<span class="dv">6</span>),</span>
+<span id="cb39-6"><a href="#cb39-6" aria-hidden="true" tabindex="-1"></a>                                                     <span class="at">filename_prefix =</span> <span class="st">"bonds_"</span>)</span>
+<span id="cb39-7"><a href="#cb39-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-8"><a href="#cb39-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Asset description to use in plot titles</span></span>
+<span id="cb39-9"><a href="#cb39-9" aria-hidden="true" tabindex="-1"></a>asset_description <span class="ot">&lt;-</span> <span class="st">"an equal-weight bond ETF"</span></span>
+<span id="cb39-10"><a href="#cb39-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-11"><a href="#cb39-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot results for current-day z-score</span></span>
+<span id="cb39-12"><a href="#cb39-12" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_results</span>(plotdata[[<span class="dv">1</span>]], <span class="st">"z_score_stratum"</span>, asset_description)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="analysis_worksheet_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot results for 20-day moving average of z-score</span></span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_results</span>(plotdata[[<span class="dv">2</span>]], <span class="st">"moving_average_z_score_stratum"</span>, asset_description)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="analysis_worksheet_files/figure-html/unnamed-chunk-6-2.png" class="img-fluid" width="672"></p>
+</div>
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot results for difference between current-day z-score and 20-day moving average of z-score</span></span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_results_ds</span>(plotdata[[<span class="dv">3</span>]], <span class="st">"moving_average_z_score_stratum"</span>, <span class="st">"diff_z_score_stratum"</span>, asset_description, <span class="at">period =</span> <span class="dv">20</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="analysis_worksheet_files/figure-html/unnamed-chunk-6-3.png" class="img-fluid" width="672"></p>
+</div>
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="co">#calculate potential return per trade and number of trade opportunities by strategy</span></span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a><span class="fu">map2_dfr</span>(<span class="at">.x =</span> plotdata,</span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a>         <span class="at">.y =</span> <span class="fu">c</span>(<span class="st">"z-score"</span>,<span class="st">"ma of z-score"</span>,<span class="st">"double-strat"</span>),</span>
+<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a>         <span class="at">.f =</span> trade_potential) <span class="sc">%&gt;%</span></span>
+<span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(strategy) <span class="sc">%&gt;%</span></span>
+<span id="cb42-6"><a href="#cb42-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">mean_return =</span> <span class="fu">sum</span>(avg_potential_return<span class="sc">*</span>n_of_trades)<span class="sc">/</span><span class="fu">sum</span>(n_of_trades),</span>
+<span id="cb42-7"><a href="#cb42-7" aria-hidden="true" tabindex="-1"></a>            <span class="at">n_of_trades =</span> <span class="fu">sum</span>(n_of_trades))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2 × 3
+  strategy      mean_return n_of_trades
+  &lt;chr&gt;               &lt;dbl&gt;       &lt;int&gt;
+1 double-strat     0.00117           70
+2 ma of z-score    0.000985          50</code></pre>
+</div>
+</div>
+</section>
+<section id="commodities-etfs" class="level2">
+<h2 class="anchored" data-anchor-id="commodities-etfs">Commodities ETFs</h2>
+<p>Commodities ETFs tend to be futures ETFs. As a result, there’s a lot of “negative carry,” or “cost to own,” in the form of contract fees and rollover costs. These are meant as vehicles for short-term speculation, not long-term investing. As a result, their returns are generally negative.</p>
+<p>As the plots show, this is also one of the only asset classes that exhibits downward momentum rather than upward mean reversion after a strong move to the downside.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Commodities -----------------------------------------------------------------</span></span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a>tickers <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"FTRI"</span>,<span class="st">"PICK"</span>,<span class="st">"CUT"</span>,<span class="st">"SRUUF"</span>,<span class="st">"SGDJ"</span>,<span class="st">"PPLT"</span>,<span class="st">"GLD"</span>,<span class="st">"SLV"</span>,<span class="st">"PALL"</span>,<span class="st">"UGA"</span>,<span class="st">"BNO"</span>,<span class="st">"USO"</span>,<span class="st">"UNG"</span>,<span class="st">"FUE"</span>,<span class="st">"CANE"</span>,<span class="st">"JO"</span>,<span class="st">"CORN"</span>,<span class="st">"GRU"</span>,<span class="st">"SOYB"</span>,<span class="st">"WEAT"</span>,<span class="st">"NIB"</span>,<span class="st">"REMX"</span>,<span class="st">"JJT"</span>,<span class="st">"SLX"</span>,<span class="st">"JJU"</span>,<span class="st">"JJC"</span>,<span class="st">"JJN"</span>,<span class="st">"DBE"</span>,<span class="st">"GSG"</span>,<span class="st">"DBB"</span>,<span class="st">"BCI"</span>,<span class="st">"DBA"</span>)</span>
+<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-5"><a href="#cb44-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Get data frame of price history and prep for analysis. Use 20-day return periods,</span></span>
+<span id="cb44-6"><a href="#cb44-6" aria-hidden="true" tabindex="-1"></a><span class="co"># a 20-day moving average of z-scores, and a 2-year window for calculating beta.</span></span>
+<span id="cb44-7"><a href="#cb44-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Use the S&amp;P 500 as the benchmark for calculating beta.</span></span>
+<span id="cb44-8"><a href="#cb44-8" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">prep_data_for_analysis</span>(tickers,</span>
+<span id="cb44-9"><a href="#cb44-9" aria-hidden="true" tabindex="-1"></a>                             <span class="at">periods =</span> <span class="fu">c</span>(<span class="dv">20</span>, <span class="dv">50</span>, <span class="dv">100</span>, <span class="dv">200</span>, <span class="dv">500</span>, <span class="dv">1000</span>),</span>
+<span id="cb44-10"><a href="#cb44-10" aria-hidden="true" tabindex="-1"></a>                             <span class="at">return_periods =</span> <span class="fu">c</span>(<span class="dv">20</span>),</span>
+<span id="cb44-11"><a href="#cb44-11" aria-hidden="true" tabindex="-1"></a>                             <span class="at">ma_period_to_use =</span> <span class="dv">20</span>,</span>
+<span id="cb44-12"><a href="#cb44-12" aria-hidden="true" tabindex="-1"></a>                             <span class="at">window_size_to_use_in_years =</span> <span class="dv">2</span>,</span>
+<span id="cb44-13"><a href="#cb44-13" aria-hidden="true" tabindex="-1"></a>                             <span class="at">benchmark_index_ticker =</span> <span class="st">"^GSPC"</span>,</span>
+<span id="cb44-14"><a href="#cb44-14" aria-hidden="true" tabindex="-1"></a>                             <span class="at">include_today=</span><span class="cn">FALSE</span>)</span>
+<span id="cb44-15"><a href="#cb44-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-16"><a href="#cb44-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Split the series for machine learning</span></span>
+<span id="cb44-17"><a href="#cb44-17" aria-hidden="true" tabindex="-1"></a>split_result <span class="ot">&lt;-</span> <span class="fu">time_series_split</span>(df, <span class="fu">as.Date</span>(<span class="st">"2020-01-01"</span>), <span class="at">n_of_rows_to_omit =</span> <span class="dv">5</span>)</span>
+<span id="cb44-18"><a href="#cb44-18" aria-hidden="true" tabindex="-1"></a>train_set <span class="ot">&lt;-</span> split_result[[<span class="dv">1</span>]]</span>
+<span id="cb44-19"><a href="#cb44-19" aria-hidden="true" tabindex="-1"></a>test_set <span class="ot">&lt;-</span> split_result[[<span class="dv">2</span>]]</span>
+<span id="cb44-20"><a href="#cb44-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-21"><a href="#cb44-21" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate correlation coefficients</span></span>
+<span id="cb44-22"><a href="#cb44-22" aria-hidden="true" tabindex="-1"></a><span class="fu">calculate_correlations</span>(train_set)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>               return_20
+z_score_20    0.02436686
+z_score_50    0.02478219
+z_score_100   0.03191575
+z_score_200   0.04033707
+z_score_500  -0.04398506
+z_score_1000 -0.05723564</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate three different linear models, using three different approaches to</span></span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a><span class="co"># stratifying price by z-score, and save data to file</span></span>
+<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a>plotdata <span class="ot">&lt;-</span> <span class="fu">compute_linear_models_by_z_score_stratum</span>(train_set,</span>
+<span id="cb46-4"><a href="#cb46-4" aria-hidden="true" tabindex="-1"></a>                                                     <span class="at">periods =</span> <span class="fu">c</span>(<span class="dv">20</span>, <span class="dv">50</span>, <span class="dv">100</span>, <span class="dv">200</span>, <span class="dv">500</span>, <span class="dv">1000</span>),</span>
+<span id="cb46-5"><a href="#cb46-5" aria-hidden="true" tabindex="-1"></a>                                                     <span class="at">return_periods =</span> <span class="fu">rep</span>(<span class="dv">20</span>,<span class="dv">6</span>),</span>
+<span id="cb46-6"><a href="#cb46-6" aria-hidden="true" tabindex="-1"></a>                                                     <span class="at">filename_prefix =</span> <span class="st">"commodities_"</span>)</span>
+<span id="cb46-7"><a href="#cb46-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb46-8"><a href="#cb46-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Asset description to use in plot titles</span></span>
+<span id="cb46-9"><a href="#cb46-9" aria-hidden="true" tabindex="-1"></a>asset_description <span class="ot">&lt;-</span> <span class="st">"an equal-weight commodities ETF"</span></span>
+<span id="cb46-10"><a href="#cb46-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb46-11"><a href="#cb46-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot results for current-day z-score</span></span>
+<span id="cb46-12"><a href="#cb46-12" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_results</span>(plotdata[[<span class="dv">1</span>]], <span class="st">"z_score_stratum"</span>, asset_description)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="analysis_worksheet_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot results for 20-day moving average of z-score</span></span>
+<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_results</span>(plotdata[[<span class="dv">2</span>]], <span class="st">"moving_average_z_score_stratum"</span>, asset_description)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="analysis_worksheet_files/figure-html/unnamed-chunk-7-2.png" class="img-fluid" width="672"></p>
+</div>
+<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot results for difference between current-day z-score and 20-day moving average of z-score</span></span>
+<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_results_ds</span>(plotdata[[<span class="dv">3</span>]], <span class="st">"moving_average_z_score_stratum"</span>, <span class="st">"diff_z_score_stratum"</span>, asset_description, <span class="at">period =</span> <span class="dv">20</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="analysis_worksheet_files/figure-html/unnamed-chunk-7-3.png" class="img-fluid" width="672"></p>
+</div>
+<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="co">#calculate potential return per trade and number of trade opportunities by strategy</span></span>
+<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a><span class="fu">map2_dfr</span>(<span class="at">.x =</span> plotdata,</span>
+<span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a>         <span class="at">.y =</span> <span class="fu">c</span>(<span class="st">"z-score"</span>,<span class="st">"ma of z-score"</span>,<span class="st">"double-strat"</span>),</span>
+<span id="cb49-4"><a href="#cb49-4" aria-hidden="true" tabindex="-1"></a>         <span class="at">.f =</span> trade_potential) <span class="sc">%&gt;%</span></span>
+<span id="cb49-5"><a href="#cb49-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(strategy) <span class="sc">%&gt;%</span></span>
+<span id="cb49-6"><a href="#cb49-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">mean_return =</span> <span class="fu">sum</span>(avg_potential_return<span class="sc">*</span>n_of_trades)<span class="sc">/</span><span class="fu">sum</span>(n_of_trades),</span>
+<span id="cb49-7"><a href="#cb49-7" aria-hidden="true" tabindex="-1"></a>            <span class="at">n_of_trades =</span> <span class="fu">sum</span>(n_of_trades))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 3
+  strategy     mean_return n_of_trades
+  &lt;chr&gt;              &lt;dbl&gt;       &lt;int&gt;
+1 double-strat     0.00138         185</code></pre>
+</div>
+</div>
+</section>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>

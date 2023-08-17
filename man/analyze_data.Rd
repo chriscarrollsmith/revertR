@@ -4,7 +4,13 @@
 \alias{analyze_data}
 \title{Financial Data Analysis Function}
 \usage{
-analyze_data(df, plotdata, stratum1, stratum2 = NULL)
+analyze_data(
+  df,
+  plotdata,
+  stratum1 = "z_score_stratum",
+  stratum2 = NULL,
+  periods = c(20, 50, 100, 200, 500, 1000)
+)
 }
 \arguments{
 \item{df}{A data frame containing the financial data that needs to be analyzed.

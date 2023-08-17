@@ -9,16 +9,23 @@ editor: visual
 
 To screen assets based on the last available prices, simply render this worksheet.
 
+```{r message=FALSE}
+library(tidyverse)
+library(tidyquant)
+library(revertR)
+options(scipen = 999)
+```
+
 ## S&P 500
 
-```{r}
+```{r message=FALSE, warning=FALSE}
 # Fetch and prep S&P 500 data
 tickers <- tq_index("SP500",use_fallback=TRUE) %>% filter(symbol != "-") %>% pull(symbol)
-sp500_df <- prep_data_for_forecasting(tickers, periods, include_today=FALSE)
+df <- prep_data_for_forecasting(tickers, include_today=FALSE)
 
 # Forecast returns
-data(sp500DSplotdata, package="revertR")
-sp500_forecasts <- analyze_data(sp500_df, sp500DSplotdata, "z_score_stratum", "diff_stratum")
+data(sp500_ds_plotdata, package="revertR")
+sp500_forecasts <- analyze_data(df, ds_plotdata, "moving_average_z_score_stratum", "diff_z_score_stratum")
 
 #Classify and filter double strat results
 classify_investment_thesis(sp500_forecasts) %>%
@@ -34,11 +41,11 @@ classify_investment_thesis(sp500_forecasts) %>%
 ```{r}
 # Fetch and prep S&P 600 data
 tickers <- tq_index("SP600",use_fallback=TRUE) %>% filter(symbol != "-") %>% pull(symbol)
-sp600_df <- prep_data_for_forecasting(tickers, periods, include_today=FALSE)
+df <- prep_data_for_forecasting(tickers, include_today=FALSE)
 
 # Forecast returns using the combo of both indicators
-data("sp600DSplotdata", package="revertR")
-sp600_forecasts <- analyze_data(sp600_df, sp600DSplotdata, "z_score_stratum", "diff_stratum")
+data("sp600_ds_plotdata", package="revertR")
+sp600_forecasts <- analyze_data(df, ds_plotdata, "moving_average_z_score_stratum", "diff_z_score_stratum")
 
 #Classify and filter double strat results
 classify_investment_thesis(sp600_forecasts) %>%
@@ -54,11 +61,11 @@ classify_investment_thesis(sp600_forecasts) %>%
 ```{r}
 # Fetch and prep sectors data
 tickers <- c("XLRE","XLY","XLI","XLB","XLE","XLF","XLP","XLV","XLU","XAR","XBI","XHB","XME","XTL","XTN","XSW","XSD","XLK","XLC","XRT","KRE","XES","XOP","KIE","XWEB","XPH","XHS","XHE")
-sectors_df <- prep_data_for_forecasting(tickers, periods, include_today=FALSE)
+df <- prep_data_for_forecasting(tickers, include_today=FALSE)
 
 # Forecast returns using the combo of both indicators
-data("sectorsDSplotdata", package="revertR")
-sectors_forecasts <- analyze_data(sectors_df, sectorsDSplotdata, "z_score_stratum", "diff_stratum")
+data("sectors_ds_plotdata", package="revertR")
+sectors_forecasts <- analyze_data(df, ds_plotdata, "moving_average_z_score_stratum", "diff_z_score_stratum")
 
 #Classify and filter double strat results
 classify_investment_thesis(sectors_forecasts) %>%
@@ -69,16 +76,16 @@ classify_investment_thesis(sectors_forecasts) %>%
   print()
 ```
 
-## Selected country ETFs
+## Country ETFs
 
 ```{r}
 # Fetch and prep countries data
 tickers <- c("FLLA","FLEE","FLFR","FLAX","FLIN","FLKR","FLSW","FLTW","EWO","EIRL","FLMX","EWN","ARGT","ENOR","GREK","EUSA","FLSA","UAE","EIS","FLRU","EWQ","EDEN","FLCA","EWD","FLIY","FLZA","FLGB","FLAU","EWP","FLHK","EWS","FLJP","PGAL","EFNL","THD","FLGR","GXG","IDX","FLBR","EPHE","QAT","TUR","ECH","NGE","ENZL","EGPT","EWM","FLCH","PAK","EPU")
-countries_df <- prep_data_for_forecasting(tickers, periods, include_today=FALSE)
+df <- prep_data_for_forecasting(tickers, include_today=FALSE)
 
 # Forecast returns using the combo of both indicators
-data("countriesDSplotdata", package="revertR")
-countries_forecasts <- analyze_data(countries_df, countriesDSplotdata, "z_score_stratum", "diff_stratum")
+data("countries_ds_plotdata", package="revertR")
+countries_forecasts <- analyze_data(df, ds_plotdata, "moving_average_z_score_stratum", "diff_z_score_stratum")
 
 #Classify and filter double strat results
 classify_investment_thesis(countries_forecasts) %>%
@@ -94,14 +101,34 @@ classify_investment_thesis(countries_forecasts) %>%
 ```{r}
 # Fetch and prep bonds data
 tickers <- c("VWOB","SPSB","IAGG","HYEM","BNDX","BND","TIP","SPLB","SPIB","BSV","GBF","BIL","SPTI","VTEB","SPHY","PLW","SPTL","IGLB","IGIB","SPMB")
-bonds_df <- prep_data_for_forecasting(tickers, periods, include_today=FALSE)
+df <- prep_data_for_forecasting(tickers, include_today=FALSE)
 
 # Forecast returns using the combo of both indicators
-data("bondsDSplotdata", package="revertR")
-bonds_forecasts <- analyze_data(bonds_df, bondsDSplotdata, "z_score_stratum", "diff_stratum")
+data("bonds_ds_plotdata", package="revertR")
+bonds_forecasts <- analyze_data(df, ds_plotdata, "moving_average_z_score_stratum", "diff_z_score_stratum")
 
 #Classify and filter double strat results
 classify_investment_thesis(bonds_forecasts) %>%
+  group_by(type) %>%
+  arrange(desc(average_expected_return)) %>%
+  filter(row_number()<3) %>%
+  select(symbol,average_expected_return,type) %>%
+  print()
+```
+
+## Commodities ETFs
+
+```{r}
+# Fetch and prep bonds data
+tickers <- c("FTRI","PICK","CUT","SRUUF","SGDJ","PPLT","GLD","SLV","PALL","UGA","BNO","USO","UNG","FUE","CANE","JO","CORN","GRU","SOYB","WEAT","NIB","REMX","JJT","SLX","JJU","JJC","JJN","DBE","GSG","DBB","BCI","DBA")
+df <- prep_data_for_forecasting(tickers, include_today=FALSE)
+
+# Forecast returns using the combo of both indicators
+data("commodities_ds_plotdata", package="revertR")
+commodities_forecasts <- analyze_data(df, ds_plotdata, "moving_average_z_score_stratum", "diff_z_score_stratum")
+
+#Classify and filter double strat results
+classify_investment_thesis(commodities_forecasts) %>%
   group_by(type) %>%
   arrange(desc(average_expected_return)) %>%
   filter(row_number()<3) %>%

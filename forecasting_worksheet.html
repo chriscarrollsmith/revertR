@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.353">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Christopher C. Smith">
+
+<title>Forecasting worksheet</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="forecasting_worksheet_files/libs/clipboard/clipboard.min.js"></script>
+<script src="forecasting_worksheet_files/libs/quarto-html/quarto.js"></script>
+<script src="forecasting_worksheet_files/libs/quarto-html/popper.min.js"></script>
+<script src="forecasting_worksheet_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="forecasting_worksheet_files/libs/quarto-html/anchor.min.js"></script>
+<link href="forecasting_worksheet_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="forecasting_worksheet_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="forecasting_worksheet_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="forecasting_worksheet_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="forecasting_worksheet_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+
+
+</head>
+
+<body class="fullcontent">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Forecasting worksheet</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Christopher C. Smith </p>
+          </div>
+  </div>
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<section id="comprehensive-asset-screening-and-forecasting-worksheet" class="level1">
+<h1>Comprehensive asset screening and forecasting worksheet</h1>
+<p>To screen assets based on the last available prices, simply render this worksheet.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyquant)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(revertR)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">options</span>(<span class="at">scipen =</span> <span class="dv">999</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="sp-500" class="level2">
+<h2 class="anchored" data-anchor-id="sp-500">S&amp;P 500</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Fetch and prep S&amp;P 500 data</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>tickers <span class="ot">&lt;-</span> <span class="fu">tq_index</span>(<span class="st">"SP500"</span>,<span class="at">use_fallback=</span><span class="cn">TRUE</span>) <span class="sc">%&gt;%</span> <span class="fu">filter</span>(symbol <span class="sc">!=</span> <span class="st">"-"</span>) <span class="sc">%&gt;%</span> <span class="fu">pull</span>(symbol)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Using fallback dataset last downloaded 2019-10-11.</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">prep_data_for_forecasting</span>(tickers, <span class="at">include_today=</span><span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: There were 49 warnings in `dplyr::mutate()`.
+The first warning was:
+ℹ In argument: `data.. = purrr::map(...)`.
+Caused by warning:
+! x = 'FB', get = 'stock.prices': Error in getSymbols.yahoo(Symbols = "FB", env = &lt;environment&gt;, verbose = FALSE, : Unable to import "FB".
+HTTP error 404.
+ Removing FB.
+ℹ Run `dplyr::last_dplyr_warnings()` to see the 48 remaining warnings.</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Forecast returns</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(sp500_ds_plotdata, <span class="at">package=</span><span class="st">"revertR"</span>)</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>sp500_forecasts <span class="ot">&lt;-</span> <span class="fu">analyze_data</span>(df, ds_plotdata, <span class="st">"moving_average_z_score_stratum"</span>, <span class="st">"diff_z_score_stratum"</span>)</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="co">#Classify and filter double strat results</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="fu">classify_investment_thesis</span>(sp500_forecasts) <span class="sc">%&gt;%</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(type) <span class="sc">%&gt;%</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(average_expected_return)) <span class="sc">%&gt;%</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">row_number</span>()<span class="sc">&lt;</span><span class="dv">4</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(symbol,average_expected_return,type) <span class="sc">%&gt;%</span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 3
+# Groups:   type [2]
+  symbol average_expected_return type                     
+  &lt;chr&gt;                    &lt;dbl&gt; &lt;chr&gt;                    
+1 HSY                   0.000477 short-term mean reversion
+2 FTNT                  0.000437 short-term mean reversion
+3 EXR                   0.000434 short-term mean reversion
+4 VNO                   0.000400 short-term momentum      
+5 ZION                  0.000323 short-term momentum      
+6 JKHY                  0.000308 short-term momentum      </code></pre>
+</div>
+</div>
+</section>
+<section id="sp-600" class="level2">
+<h2 class="anchored" data-anchor-id="sp-600">S&amp;P 600</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Fetch and prep S&amp;P 600 data</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>tickers <span class="ot">&lt;-</span> <span class="fu">tq_index</span>(<span class="st">"SP600"</span>,<span class="at">use_fallback=</span><span class="cn">TRUE</span>) <span class="sc">%&gt;%</span> <span class="fu">filter</span>(symbol <span class="sc">!=</span> <span class="st">"-"</span>) <span class="sc">%&gt;%</span> <span class="fu">pull</span>(symbol)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Using fallback dataset last downloaded 2019-10-11.</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">prep_data_for_forecasting</span>(tickers, <span class="at">include_today=</span><span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: There were 119 warnings in `dplyr::mutate()`.
+The first warning was:
+ℹ In argument: `data.. = purrr::map(...)`.
+Caused by warning:
+! x = 'CCMP', get = 'stock.prices': Error in getSymbols.yahoo(Symbols = "CCMP", env = &lt;environment&gt;, verbose = FALSE, : Unable to import "CCMP".
+HTTP error 404.
+ Removing CCMP.
+ℹ Run `dplyr::last_dplyr_warnings()` to see the 118 remaining warnings.</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Forecast returns using the combo of both indicators</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">"sp600_ds_plotdata"</span>, <span class="at">package=</span><span class="st">"revertR"</span>)</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>sp600_forecasts <span class="ot">&lt;-</span> <span class="fu">analyze_data</span>(df, ds_plotdata, <span class="st">"moving_average_z_score_stratum"</span>, <span class="st">"diff_z_score_stratum"</span>)</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="co">#Classify and filter double strat results</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a><span class="fu">classify_investment_thesis</span>(sp600_forecasts) <span class="sc">%&gt;%</span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(type) <span class="sc">%&gt;%</span></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(average_expected_return)) <span class="sc">%&gt;%</span></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">row_number</span>()<span class="sc">&lt;</span><span class="dv">4</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(symbol,average_expected_return,type) <span class="sc">%&gt;%</span></span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 3
+# Groups:   type [2]
+  symbol average_expected_return type                     
+  &lt;chr&gt;                    &lt;dbl&gt; &lt;chr&gt;                    
+1 FWRD                  0.00128  short-term mean reversion
+2 SEDG                  0.000478 short-term mean reversion
+3 CVBF                  0.000471 short-term momentum      
+4 TG                    0.000452 short-term mean reversion
+5 WABC                  0.000416 short-term momentum      
+6 INDB                  0.000415 short-term momentum      </code></pre>
+</div>
+</div>
+</section>
+<section id="sector-etfs" class="level2">
+<h2 class="anchored" data-anchor-id="sector-etfs">Sector ETFs</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Fetch and prep sectors data</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>tickers <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"XLRE"</span>,<span class="st">"XLY"</span>,<span class="st">"XLI"</span>,<span class="st">"XLB"</span>,<span class="st">"XLE"</span>,<span class="st">"XLF"</span>,<span class="st">"XLP"</span>,<span class="st">"XLV"</span>,<span class="st">"XLU"</span>,<span class="st">"XAR"</span>,<span class="st">"XBI"</span>,<span class="st">"XHB"</span>,<span class="st">"XME"</span>,<span class="st">"XTL"</span>,<span class="st">"XTN"</span>,<span class="st">"XSW"</span>,<span class="st">"XSD"</span>,<span class="st">"XLK"</span>,<span class="st">"XLC"</span>,<span class="st">"XRT"</span>,<span class="st">"KRE"</span>,<span class="st">"XES"</span>,<span class="st">"XOP"</span>,<span class="st">"KIE"</span>,<span class="st">"XWEB"</span>,<span class="st">"XPH"</span>,<span class="st">"XHS"</span>,<span class="st">"XHE"</span>)</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">prep_data_for_forecasting</span>(tickers, <span class="at">include_today=</span><span class="cn">FALSE</span>)</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Forecast returns using the combo of both indicators</span></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">"sectors_ds_plotdata"</span>, <span class="at">package=</span><span class="st">"revertR"</span>)</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>sectors_forecasts <span class="ot">&lt;-</span> <span class="fu">analyze_data</span>(df, ds_plotdata, <span class="st">"moving_average_z_score_stratum"</span>, <span class="st">"diff_z_score_stratum"</span>)</span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a><span class="co">#Classify and filter double strat results</span></span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a><span class="fu">classify_investment_thesis</span>(sectors_forecasts) <span class="sc">%&gt;%</span></span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(type) <span class="sc">%&gt;%</span></span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(average_expected_return)) <span class="sc">%&gt;%</span></span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">row_number</span>()<span class="sc">&lt;</span><span class="dv">3</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(symbol,average_expected_return,type) <span class="sc">%&gt;%</span></span>
+<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 4 × 3
+# Groups:   type [2]
+  symbol average_expected_return type                     
+  &lt;chr&gt;                    &lt;dbl&gt; &lt;chr&gt;                    
+1 XHE                   0.000318 short-term mean reversion
+2 XSD                   0.000285 short-term mean reversion
+3 XLK                   0.000281 short-term momentum      
+4 KRE                   0.000243 short-term momentum      </code></pre>
+</div>
+</div>
+</section>
+<section id="country-etfs" class="level2">
+<h2 class="anchored" data-anchor-id="country-etfs">Country ETFs</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Fetch and prep countries data</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>tickers <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"FLLA"</span>,<span class="st">"FLEE"</span>,<span class="st">"FLFR"</span>,<span class="st">"FLAX"</span>,<span class="st">"FLIN"</span>,<span class="st">"FLKR"</span>,<span class="st">"FLSW"</span>,<span class="st">"FLTW"</span>,<span class="st">"EWO"</span>,<span class="st">"EIRL"</span>,<span class="st">"FLMX"</span>,<span class="st">"EWN"</span>,<span class="st">"ARGT"</span>,<span class="st">"ENOR"</span>,<span class="st">"GREK"</span>,<span class="st">"EUSA"</span>,<span class="st">"FLSA"</span>,<span class="st">"UAE"</span>,<span class="st">"EIS"</span>,<span class="st">"FLRU"</span>,<span class="st">"EWQ"</span>,<span class="st">"EDEN"</span>,<span class="st">"FLCA"</span>,<span class="st">"EWD"</span>,<span class="st">"FLIY"</span>,<span class="st">"FLZA"</span>,<span class="st">"FLGB"</span>,<span class="st">"FLAU"</span>,<span class="st">"EWP"</span>,<span class="st">"FLHK"</span>,<span class="st">"EWS"</span>,<span class="st">"FLJP"</span>,<span class="st">"PGAL"</span>,<span class="st">"EFNL"</span>,<span class="st">"THD"</span>,<span class="st">"FLGR"</span>,<span class="st">"GXG"</span>,<span class="st">"IDX"</span>,<span class="st">"FLBR"</span>,<span class="st">"EPHE"</span>,<span class="st">"QAT"</span>,<span class="st">"TUR"</span>,<span class="st">"ECH"</span>,<span class="st">"NGE"</span>,<span class="st">"ENZL"</span>,<span class="st">"EGPT"</span>,<span class="st">"EWM"</span>,<span class="st">"FLCH"</span>,<span class="st">"PAK"</span>,<span class="st">"EPU"</span>)</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">prep_data_for_forecasting</span>(tickers, <span class="at">include_today=</span><span class="cn">FALSE</span>)</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Forecast returns using the combo of both indicators</span></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">"countries_ds_plotdata"</span>, <span class="at">package=</span><span class="st">"revertR"</span>)</span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>countries_forecasts <span class="ot">&lt;-</span> <span class="fu">analyze_data</span>(df, ds_plotdata, <span class="st">"moving_average_z_score_stratum"</span>, <span class="st">"diff_z_score_stratum"</span>)</span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a><span class="co">#Classify and filter double strat results</span></span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a><span class="fu">classify_investment_thesis</span>(countries_forecasts) <span class="sc">%&gt;%</span></span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(type) <span class="sc">%&gt;%</span></span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(average_expected_return)) <span class="sc">%&gt;%</span></span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">row_number</span>()<span class="sc">&lt;</span><span class="dv">3</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(symbol,average_expected_return,type) <span class="sc">%&gt;%</span></span>
+<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 4 × 3
+# Groups:   type [2]
+  symbol average_expected_return type                     
+  &lt;chr&gt;                    &lt;dbl&gt; &lt;chr&gt;                    
+1 EFNL                  0.000308 short-term mean reversion
+2 EWS                   0.000298 short-term momentum      
+3 EWD                   0.000284 short-term mean reversion
+4 FLCH                  0.000266 short-term momentum      </code></pre>
+</div>
+</div>
+</section>
+<section id="selected-bond-etfs" class="level2">
+<h2 class="anchored" data-anchor-id="selected-bond-etfs">Selected bond ETFs</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Fetch and prep bonds data</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>tickers <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"VWOB"</span>,<span class="st">"SPSB"</span>,<span class="st">"IAGG"</span>,<span class="st">"HYEM"</span>,<span class="st">"BNDX"</span>,<span class="st">"BND"</span>,<span class="st">"TIP"</span>,<span class="st">"SPLB"</span>,<span class="st">"SPIB"</span>,<span class="st">"BSV"</span>,<span class="st">"GBF"</span>,<span class="st">"BIL"</span>,<span class="st">"SPTI"</span>,<span class="st">"VTEB"</span>,<span class="st">"SPHY"</span>,<span class="st">"PLW"</span>,<span class="st">"SPTL"</span>,<span class="st">"IGLB"</span>,<span class="st">"IGIB"</span>,<span class="st">"SPMB"</span>)</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">prep_data_for_forecasting</span>(tickers, <span class="at">include_today=</span><span class="cn">FALSE</span>)</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Forecast returns using the combo of both indicators</span></span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">"bonds_ds_plotdata"</span>, <span class="at">package=</span><span class="st">"revertR"</span>)</span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>bonds_forecasts <span class="ot">&lt;-</span> <span class="fu">analyze_data</span>(df, ds_plotdata, <span class="st">"moving_average_z_score_stratum"</span>, <span class="st">"diff_z_score_stratum"</span>)</span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a><span class="co">#Classify and filter double strat results</span></span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a><span class="fu">classify_investment_thesis</span>(bonds_forecasts) <span class="sc">%&gt;%</span></span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(type) <span class="sc">%&gt;%</span></span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(average_expected_return)) <span class="sc">%&gt;%</span></span>
+<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">row_number</span>()<span class="sc">&lt;</span><span class="dv">3</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(symbol,average_expected_return,type) <span class="sc">%&gt;%</span></span>
+<span id="cb18-15"><a href="#cb18-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 4 × 3
+# Groups:   type [2]
+  symbol average_expected_return type                     
+  &lt;chr&gt;                    &lt;dbl&gt; &lt;chr&gt;                    
+1 SPMB                  0.000317 short-term mean reversion
+2 BND                   0.000316 short-term mean reversion
+3 VWOB                  0.000206 short-term momentum      
+4 SPSB                  0.000183 short-term momentum      </code></pre>
+</div>
+</div>
+</section>
+<section id="commodities-etfs" class="level2">
+<h2 class="anchored" data-anchor-id="commodities-etfs">Commodities ETFs</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Fetch and prep bonds data</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>tickers <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"FTRI"</span>,<span class="st">"PICK"</span>,<span class="st">"CUT"</span>,<span class="st">"SRUUF"</span>,<span class="st">"SGDJ"</span>,<span class="st">"PPLT"</span>,<span class="st">"GLD"</span>,<span class="st">"SLV"</span>,<span class="st">"PALL"</span>,<span class="st">"UGA"</span>,<span class="st">"BNO"</span>,<span class="st">"USO"</span>,<span class="st">"UNG"</span>,<span class="st">"FUE"</span>,<span class="st">"CANE"</span>,<span class="st">"JO"</span>,<span class="st">"CORN"</span>,<span class="st">"GRU"</span>,<span class="st">"SOYB"</span>,<span class="st">"WEAT"</span>,<span class="st">"NIB"</span>,<span class="st">"REMX"</span>,<span class="st">"JJT"</span>,<span class="st">"SLX"</span>,<span class="st">"JJU"</span>,<span class="st">"JJC"</span>,<span class="st">"JJN"</span>,<span class="st">"DBE"</span>,<span class="st">"GSG"</span>,<span class="st">"DBB"</span>,<span class="st">"BCI"</span>,<span class="st">"DBA"</span>)</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">prep_data_for_forecasting</span>(tickers, <span class="at">include_today=</span><span class="cn">FALSE</span>)</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Forecast returns using the combo of both indicators</span></span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">"commodities_ds_plotdata"</span>, <span class="at">package=</span><span class="st">"revertR"</span>)</span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>commodities_forecasts <span class="ot">&lt;-</span> <span class="fu">analyze_data</span>(df, ds_plotdata, <span class="st">"moving_average_z_score_stratum"</span>, <span class="st">"diff_z_score_stratum"</span>)</span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a><span class="co">#Classify and filter double strat results</span></span>
+<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a><span class="fu">classify_investment_thesis</span>(commodities_forecasts) <span class="sc">%&gt;%</span></span>
+<span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(type) <span class="sc">%&gt;%</span></span>
+<span id="cb20-12"><a href="#cb20-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(average_expected_return)) <span class="sc">%&gt;%</span></span>
+<span id="cb20-13"><a href="#cb20-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">row_number</span>()<span class="sc">&lt;</span><span class="dv">3</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb20-14"><a href="#cb20-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(symbol,average_expected_return,type) <span class="sc">%&gt;%</span></span>
+<span id="cb20-15"><a href="#cb20-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 4 × 3
+# Groups:   type [2]
+  symbol average_expected_return type                     
+  &lt;chr&gt;                    &lt;dbl&gt; &lt;chr&gt;                    
+1 PPLT                  0.000308 short-term mean reversion
+2 SGDJ                  0.000291 short-term mean reversion
+3 WEAT                  0.000264 short-term momentum      
+4 CUT                   0.000206 short-term momentum      </code></pre>
+</div>
+</div>
+</section>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>

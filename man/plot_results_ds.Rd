@@ -33,6 +33,6 @@ moving average thereof. The plot is double stratified according to the parameter
 }
 \examples{
 \dontrun{
-  plotresults_ds(plotdata, stratum1 = "moving_average_z_score_stratum", stratum2 = "diff_z_score_stratum", asset = "an S&P 500 stock", period = 20)
+  plot_results_ds(plotdata, stratum1 = "moving_average_z_score_stratum", stratum2 = "diff_z_score_stratum", asset = "an S&P 500 stock", period = 20)
 }
 }

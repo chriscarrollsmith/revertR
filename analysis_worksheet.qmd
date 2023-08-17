@@ -7,9 +7,9 @@ editor: visual
 
 # Comprehensive asset analysis worksheet
 
-This worksheet is designed for comprehensive analysis of momentum and mean reversion effects in various asset classes, using novel indicators that quantify mean reversion and momentum in terms of the price's z-score relationship to its exponential moving averages. Note that many model parameters can be adjusted.
+This worksheet is designed for comprehensive analysis of momentum and mean reversion effects in various asset classes, using novel indicators that quantify mean reversion and momentum in terms of the price's z-score relationship to its exponential moving averages. Note that many model parameters can be adjusted. Run all cells in the document to complete the analysis. In addition to rendering plots and figures, this will also save plot data in the folder [/data](/data).
 
-This is a work in progress. I have split the data for machine learning, but I have not yet attempted to validate the training results on the test data. I would also like to try some more traditional machine learning algorithms, like maybe a k-nearest neighbors (knn) algorithm. I also want to make use of my beta variable and add some additional variables, such as percentile rank and index-level z-score.
+This library and worksheet are works in progress. I have split the data for machine learning, but I have not yet attempted to validate the training results on the test data. I would also like to try some more traditional machine learning algorithms, like maybe a k-nearest neighbors (knn) algorithm. I also want to make use of my beta variable and add some additional variables, such as percentile rank and index-level z-score.
 
 ```{r message=FALSE}
 library(tidyverse)
@@ -54,7 +54,7 @@ calculate_correlations(train_set)
 plotdata <- compute_linear_models_by_z_score_stratum(train_set,
                                                      periods = c(20, 50, 100, 200, 500, 1000),
                                                      return_periods = rep(20,6),
-                                                     filename_prefix = "sp500")
+                                                     filename_prefix = "sp500_")
 
 # Asset description to use in plot titles
 asset_description <- "an S&P 500 stock"
@@ -113,7 +113,7 @@ calculate_correlations(train_set)
 plotdata <- compute_linear_models_by_z_score_stratum(train_set,
                                                      periods = c(20, 50, 100, 200, 500, 1000),
                                                      return_periods = rep(20,6),
-                                                     filename_prefix = "sp600")
+                                                     filename_prefix = "sp600_")
 
 # Asset description to use in plot titles
 asset_description <- "an S&P 600 stock"
@@ -169,7 +169,7 @@ calculate_correlations(train_set)
 plotdata <- compute_linear_models_by_z_score_stratum(train_set,
                                                      periods = c(20, 50, 100, 200, 500, 1000),
                                                      return_periods = rep(20,6),
-                                                     filename_prefix = "sectors")
+                                                     filename_prefix = "sectors_")
 
 # Asset description to use in plot titles
 asset_description <- "an equal-weight sector ETF"
@@ -224,7 +224,7 @@ calculate_correlations(train_set)
 plotdata <- compute_linear_models_by_z_score_stratum(train_set,
                                                      periods = c(20, 50, 100, 200, 500, 1000),
                                                      return_periods = rep(20,6),
-                                                     filename_prefix = "countries")
+                                                     filename_prefix = "countries_")
 
 # Asset description to use in plot titles
 asset_description <- "an equal-weight country ETF"
@@ -280,7 +280,7 @@ calculate_correlations(train_set)
 plotdata <- compute_linear_models_by_z_score_stratum(train_set,
                                                      periods = c(20, 50, 100, 200, 500, 1000),
                                                      return_periods = rep(20,6),
-                                                     filename_prefix = "bonds")
+                                                     filename_prefix = "bonds_")
 
 # Asset description to use in plot titles
 asset_description <- "an equal-weight bond ETF"
@@ -338,7 +338,7 @@ calculate_correlations(train_set)
 plotdata <- compute_linear_models_by_z_score_stratum(train_set,
                                                      periods = c(20, 50, 100, 200, 500, 1000),
                                                      return_periods = rep(20,6),
-                                                     filename_prefix = "commodities")
+                                                     filename_prefix = "commodities_")
 
 # Asset description to use in plot titles
 asset_description <- "an equal-weight commodities ETF"

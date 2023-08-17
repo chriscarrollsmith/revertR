@@ -564,20 +564,20 @@ prep_data_for_analysis <- function(tickers, periods = c(20, 50, 100, 200, 500, 1
 #'
 #' @export
 
-analyze_data <- function(df, plotdata, stratum1, stratum2=NULL) {
+analyze_data <- function(df, plotdata, stratum1="z_score_stratum", stratum2=NULL, periods = c(20, 50, 100, 200, 500, 1000)) {
   # Retrieve expected returns and calculate averages
   df <- purrr::pmap_df(df, function(...) {
     row_data <- tibble(...)
     for(period in periods) {
       if(!is.na(row_data[[paste0(stratum1, "_", period)]])) {
-        # match on diff_stratum as well if stratum2 is provided
+        # match on stratum2 as well if stratum2 is provided
         if(is.null(stratum2)) {
           condition <- plotdata$duration == period &
-            plotdata$z_score_stratum == row_data[[paste0(stratum1, "_", period)]]
+            plotdata[[stratum1]] == row_data[[paste0(stratum1, "_", period)]]
         } else {
           condition <- plotdata$duration == period &
-            plotdata$z_score_stratum == row_data[[paste0(stratum1, "_", period)]] &
-            plotdata$diff_stratum == row_data[[paste0(stratum2, "_", period)]]
+            plotdata[[stratum1]] == row_data[[paste0(stratum1, "_", period)]] &
+            plotdata[[stratum2]] == row_data[[paste0(stratum2, "_", period)]]
         }
         matched_rows_indices <- which(condition)
         if (length(matched_rows_indices) > 1) {

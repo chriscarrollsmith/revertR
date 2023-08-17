@@ -233,7 +233,7 @@ plot_results <- function(plotdata, stratum = "z_score_stratum", asset = "an S&P 
          subtitle = StrCap("Faceted by EMA/return period length"),
          x = StrCap(title_ending),
          y = StrCap("Average daily return from purchasing at price"),
-         caption = paste("Analysis based on", sum(plotdata$n[plotdata$duration == 20]), "daily price observations. Data courtesy of Yahoo! Finance. Copyright Promptly Technologies, LLC, 2023.")) +
+         caption = paste("Analysis based on", sum(plotdata$n[plotdata$duration == 20]), "daily price observations.\nData courtesy of Yahoo! Finance. Copyright Promptly Technologies, LLC, 2023.")) +
     facet_wrap(vars(duration))
 }
 
@@ -252,7 +252,7 @@ plot_results <- function(plotdata, stratum = "z_score_stratum", asset = "an S&P 
 #' @return A ggplot object representing the plotted data.
 #' @examples
 #' \dontrun{
-#'   plotresults_ds(plotdata, stratum1 = "moving_average_z_score_stratum", stratum2 = "diff_z_score_stratum", asset = "an S&P 500 stock", period = 20)
+#'   plot_results_ds(plotdata, stratum1 = "moving_average_z_score_stratum", stratum2 = "diff_z_score_stratum", asset = "an S&P 500 stock", period = 20)
 #' }
 #' @importFrom ggplot2 ggplot aes geom_line scale_y_continuous scale_x_continuous labs facet_wrap
 #' @importFrom magrittr %>%
@@ -260,7 +260,7 @@ plot_results <- function(plotdata, stratum = "z_score_stratum", asset = "an S&P 
 #' @export
 
 plot_results_ds <- function(plotdata, stratum1 = "moving_average_z_score_stratum", stratum2 = "diff_z_score_stratum", asset = "an S&P 500 stock", period = 20) {
-  ds_plotdata %>%
+  plotdata %>%
     filter(duration == period) %>%
     filter(!is.na(sd_daily_return)) %>%
     group_by(moving_average_z_score_stratum) %>%
@@ -273,7 +273,7 @@ plot_results_ds <- function(plotdata, stratum1 = "moving_average_z_score_stratum
     labs(title = paste("Mean daily return for investing in",asset,"by diff between z-score relationship to",period,"EMA and trailing 20-day moving average thereof"),
          x = "Price standard deviation away from price's mean relationship to EMAs",
          y = "Average daily return from purchasing at said price",
-         caption = paste("Analysis based on", sum(plotdata$n[plotdata$duration == 20]), "trading days of historical price data courtesy of Yahoo! Finance. Copyright Wall Street Petting Zoo, 2021.")) +
+         caption = paste("Analysis based on", sum(plotdata$n[plotdata$duration == 20]), "trading days of historical price data courtesy of Yahoo! Finance.\nCopyright Promptly Technologies, LLC, 2023.")) +
     facet_wrap(vars(moving_average_z_score_stratum))
 }
 
@@ -318,7 +318,7 @@ trade_potential <- function (plotdata,strategy) {
 #' @return NULL. Results are saved to files within the ./data/ directory.
 #' @examples
 #' \dontrun{
-#'   compute_linear_models_by_z_score_stratum(df, filename_prefix = "sp500")
+#'   compute_linear_models_by_z_score_stratum(df, filename_prefix = "sp500_")
 #' }
 #' @seealso \code{\link{calculate_linear_coefficients}} for the function used to calculate linear coefficients.
 #' @export
@@ -340,9 +340,9 @@ compute_linear_models_by_z_score_stratum <- function(df,
   # Save the results to file
   plotdata_filepath <- paste0("./data/",filename_prefix,"plotdata.rda")
   save(plotdata, file = plotdata_filepath)
-  ma_plotdata_filepath <- paste0("./data/",filename_prefix,"MAplotdata.rda")
+  ma_plotdata_filepath <- paste0("./data/",filename_prefix,"ma_plotdata.rda")
   save(ma_plotdata, file = ma_plotdata_filepath)
-  ds_plotdata_filepath <- paste0("./data/",filename_prefix,"DSplotdata.rda")
+  ds_plotdata_filepath <- paste0("./data/",filename_prefix,"ds_plotdata.rda")
   save(ds_plotdata, file = ds_plotdata_filepath)
 
   return(list(plotdata,ma_plotdata,ds_plotdata))

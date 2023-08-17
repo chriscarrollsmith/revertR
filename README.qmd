@@ -19,9 +19,11 @@ The basic conceit is that you can quantify the stock price's relationship to var
 
 ## Limitations
 
-The datasets used for pre-calculating stock price returns by z-score are full of survivorship bias, and this is probably grossly distorting the forecast numbers for individual stocks. Note that forecasts on sector and country ETFs should be less biased by survivorship, and perhaps even bias-free. At some point I'd like to repeat the analysis for individual stocks with a survivorship-free dataset.
+Firstly, Yahoo! Finance no longer provides an up-to-date list of index tickers, so I need to find an alternate data source for that. Yahoo! Finance also no longer provides quotes for current market prices, so I also need to find an alternate data source for that. (I've added support for Alphavantage, but it's very limited unless you pay for premium access.)
 
-Secondly, historical returns are no guarantee of future returns, and I haven't yet built estimates of variability into my forecasting functions.
+Secondly, the datasets used for pre-calculating stock price returns by z-score are full of survivorship bias, and this is probably grossly distorting the forecast numbers for individual stocks. Note that forecasts on sector and country ETFs should be less biased by survivorship, and perhaps even bias-free. At some point I'd like to repeat the analysis for individual stocks with a survivorship-free dataset.
+
+Thirdly, historical returns are no guarantee of future returns, and I haven't yet built estimates of variability into my forecasting functions.
 
 ## Installation
 
@@ -121,22 +123,33 @@ An [analysis_worksheet](analysis_worksheet.qmd) is provided for comprehensive an
 
 ## Forecasting
 
-Note that by default, today's prices are not included in fetched data. To include today's prices in the analysis, you must obtain a free API key from Alphanvatage and set the environment variable `ALPHAVANTAGE_API_KEY` using the command `Sys.setenv(ALPHAVANTAGE_API_KEY="<your_api_key>")`.
+For forecasting, you will need two data frames. First, you need to use `prep_data_for_forecasting` to get an up-to-date price history data frame for the assets you want to forecast. Note that prices obtained through the Yahoo! Finance API are always a day old, so today's prices are not included in fetched data by default. To include today's prices in the analysis, you must obtain a free API key from Alphanvatage and set the environment variable `ALPHAVANTAGE_API_KEY` using the command `Sys.setenv(ALPHAVANTAGE_API_KEY="<your_api_key>")`. And even then, you'll only get 5 prices per day for free; more than that costs money.
 
-```{r}
+```{r messages=FALSE, warnings=FALSE}
 # Fetch and prep S&P 500 data
 tickers <- tq_index("SP500",use_fallback=TRUE) %>% filter(symbol != "-") %>% pull(symbol)
-df <- prep_data_for_forecasting(tickers, periods, include_today=FALSE)
+df <- prep_data_for_forecasting(tickers, include_today=FALSE)
 ```
 
-To run the analysis to forecast returns from the most recent closing price, you should load one of the pre-calculated S&P 500 plotdata data frames using `data`. I recommend using the double-stratified data frame, `sp500DSplotdata`. Alternatively, you can use the single-stratified data frames, `sp500plotdata` or `sp500MAplotdata`.
+Secondly, you will also need to load a plotdata data frame for the assets you want to forecast. Pre-calculated data frames are provided with the `revertR` package and can be loaded into memory using R's `data` function. I recommend using the double-stratified data frame, `sp500_ds_plotdata`, but you can also use the single-stratified data frames, `sp500_plotdata` or `sp500_ma_plotdata`.
 
-You will pass your S&P 500 prices data frame to `analyze_data` as the first argument, and the plotdata data frame as the second argument. You must also indicate the strata to be used for the analysis. For single-stratified plotdata, you will use "z_score_stratum" for the third argument, leaving the fourth argument to its default `NULL` value. For double-stratified data, you will use "z_score_stratum" as the third argument and "diff_stratum" as the fourth. (Calling this function will be simplified in future versions of the package.)
+```{r}
+# Load precalculated data provided with the revertR package
+data(sp500_ds_plotdata, package="revertR")
+```
+
+If you don't want to use the provided data, you can also calculate your own using the analysis module, save it as an `.rda` file with R's `save` function, and then load it with `load`:
+
+```{r}
+# Load data by filename using `load`
+load("./data/sp500_ds_plotdata.rda")
+```
+
+Once you've got both data frames, you will pass your prices data frame to `analyze_data` as the first argument, and the plotdata data frame as the second argument. You must also indicate the strata to be used for the analysis. For single-stratified plotdata, you will use "z_score_stratum" for the third argument, leaving the fourth argument to its default `NULL` value. For double-stratified data, you will use "z_score_stratum" as the third argument and "diff_stratum" as the fourth. (Calling this function will be simplified in future versions of the package.)
 
 ```{r}
 # Forecast returns
-data(sp500DSplotdata, package="revertR")
-sp500_forecasts <- analyze_data(df, sp500DSplotdata, "z_score_stratum", "diff_stratum")
+sp500_forecasts <- analyze_data(df, ds_plotdata, "moving_average_z_score_stratum", "diff_z_score_stratum")
 ```
 
 Once we have our data frame of return forecasts (represented as average expected daily return over the next 12 months), we can use `classify_investment_thesis` to group the forecasts by whether they represent more of a mean-reversion or momentum strategy, and over what term. However, note that these categories are fuzzy, and many forecasts are premised on a combination of momentum and mean-reversion effects.
