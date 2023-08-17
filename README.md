@@ -218,15 +218,6 @@ tickers <- tq_index("SP500",use_fallback=TRUE) %>% filter(symbol != "-") %>% pul
 df <- prep_data_for_forecasting(tickers, include_today=FALSE)
 ```
 
-    Warning: There were 50 warnings in `dplyr::mutate()`.
-    The first warning was:
-    ℹ In argument: `data.. = purrr::map(...)`.
-    Caused by warning:
-    ! x = 'FB', get = 'stock.prices': Error in getSymbols.yahoo(Symbols = "FB", env = <environment>, verbose = FALSE, : Unable to import "FB".
-    HTTP error 404.
-     Removing FB.
-    ℹ Run `dplyr::last_dplyr_warnings()` to see the 49 remaining warnings.
-
 Secondly, you will also need to load a plotdata data frame for the
 assets you want to forecast. Pre-calculated data frames are provided
 with the `revertR` package and can be loaded into memory using R’s
