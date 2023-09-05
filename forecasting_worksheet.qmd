@@ -31,7 +31,7 @@ sp500_forecasts <- analyze_data(df, ds_plotdata, "moving_average_z_score_stratum
 classify_investment_thesis(sp500_forecasts) %>%
   group_by(type) %>%
   arrange(desc(average_expected_return)) %>%
-  filter(row_number()<4) %>%
+  filter(row_number()<6) %>%
   select(symbol,average_expected_return,type) %>%
   print()
 ```
@@ -51,7 +51,7 @@ sp600_forecasts <- analyze_data(df, ds_plotdata, "moving_average_z_score_stratum
 classify_investment_thesis(sp600_forecasts) %>%
   group_by(type) %>%
   arrange(desc(average_expected_return)) %>%
-  filter(row_number()<4) %>%
+  filter(row_number()<6) %>%
   select(symbol,average_expected_return,type) %>%
   print()
 ```
@@ -71,7 +71,7 @@ sectors_forecasts <- analyze_data(df, ds_plotdata, "moving_average_z_score_strat
 classify_investment_thesis(sectors_forecasts) %>%
   group_by(type) %>%
   arrange(desc(average_expected_return)) %>%
-  filter(row_number()<3) %>%
+  filter(row_number()<6) %>%
   select(symbol,average_expected_return,type) %>%
   print()
 ```
@@ -91,7 +91,7 @@ countries_forecasts <- analyze_data(df, ds_plotdata, "moving_average_z_score_str
 classify_investment_thesis(countries_forecasts) %>%
   group_by(type) %>%
   arrange(desc(average_expected_return)) %>%
-  filter(row_number()<3) %>%
+  filter(row_number()<6) %>%
   select(symbol,average_expected_return,type) %>%
   print()
 ```
@@ -111,7 +111,7 @@ bonds_forecasts <- analyze_data(df, ds_plotdata, "moving_average_z_score_stratum
 classify_investment_thesis(bonds_forecasts) %>%
   group_by(type) %>%
   arrange(desc(average_expected_return)) %>%
-  filter(row_number()<3) %>%
+  filter(row_number()<6) %>%
   select(symbol,average_expected_return,type) %>%
   print()
 ```
@@ -131,7 +131,7 @@ commodities_forecasts <- analyze_data(df, ds_plotdata, "moving_average_z_score_s
 classify_investment_thesis(commodities_forecasts) %>%
   group_by(type) %>%
   arrange(desc(average_expected_return)) %>%
-  filter(row_number()<3) %>%
+  filter(row_number()<6) %>%
   select(symbol,average_expected_return,type) %>%
   print()
 ```
