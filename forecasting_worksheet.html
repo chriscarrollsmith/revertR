@@ -125,24 +125,32 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="fu">classify_investment_thesis</span>(sp500_forecasts) <span class="sc">%&gt;%</span></span>
 <span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(type) <span class="sc">%&gt;%</span></span>
 <span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(average_expected_return)) <span class="sc">%&gt;%</span></span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">row_number</span>()<span class="sc">&lt;</span><span class="dv">6</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">row_number</span>()<span class="sc">&lt;</span><span class="dv">10</span>) <span class="sc">%&gt;%</span></span>
 <span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(symbol,average_expected_return,type) <span class="sc">%&gt;%</span></span>
 <span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 10 × 3
+<pre><code># A tibble: 18 × 3
 # Groups:   type [2]
    symbol average_expected_return type                     
    &lt;chr&gt;                    &lt;dbl&gt; &lt;chr&gt;                    
- 1 GIS                   0.000485 short-term mean reversion
- 2 WBA                   0.000426 short-term mean reversion
- 3 DLTR                  0.000418 short-term mean reversion
- 4 DG                    0.000407 short-term mean reversion
- 5 ES                    0.000373 short-term mean reversion
- 6 JNJ                   0.000209 short-term momentum      
- 7 HUM                   0.000208 short-term momentum      
- 8 FOX                   0.000207 short-term momentum      
- 9 FOXA                  0.000207 short-term momentum      
-10 CCL                   0.000204 short-term momentum      </code></pre>
+ 1 MKC                   0.000503 short-term mean reversion
+ 2 PLD                   0.000488 short-term mean reversion
+ 3 CCI                   0.000463 short-term mean reversion
+ 4 ROL                   0.000456 short-term mean reversion
+ 5 HRL                   0.000436 short-term mean reversion
+ 6 BAX                   0.000428 short-term mean reversion
+ 7 GPC                   0.000415 short-term mean reversion
+ 8 KMX                   0.000411 short-term mean reversion
+ 9 D                     0.000388 short-term mean reversion
+10 VRSK                  0.000204 short-term momentum      
+11 PCAR                  0.000203 short-term momentum      
+12 WDC                   0.000196 short-term momentum      
+13 PKG                   0.000184 short-term momentum      
+14 IP                    0.000183 short-term momentum      
+15 FLS                   0.000180 short-term momentum      
+16 WRK                   0.000162 short-term momentum      
+17 CHTR                  0.000160 short-term momentum      
+18 REGN                  0.000158 short-term momentum      </code></pre>
 </div>
 </div>
 </section>
@@ -156,14 +164,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">prep_data_for_forecasting</span>(tickers, <span class="at">include_today=</span><span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
-<pre><code>Warning: There were 118 warnings in `dplyr::mutate()`.
+<pre><code>Warning: There were 122 warnings in `dplyr::mutate()`.
 The first warning was:
 ℹ In argument: `data.. = purrr::map(...)`.
 Caused by warning:
 ! x = 'CCMP', get = 'stock.prices': Error in getSymbols.yahoo(Symbols = "CCMP", env = &lt;environment&gt;, verbose = FALSE, : Unable to import "CCMP".
 HTTP error 404.
  Removing CCMP.
-ℹ Run `dplyr::last_dplyr_warnings()` to see the 117 remaining warnings.</code></pre>
+ℹ Run `dplyr::last_dplyr_warnings()` to see the 121 remaining warnings.</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Forecast returns using the combo of both indicators</span></span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">"sp600_ds_plotdata"</span>, <span class="at">package=</span><span class="st">"revertR"</span>)</span>
@@ -173,25 +181,32 @@ HTTP error 404.
 <span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="fu">classify_investment_thesis</span>(sp600_forecasts) <span class="sc">%&gt;%</span></span>
 <span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(type) <span class="sc">%&gt;%</span></span>
 <span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(average_expected_return)) <span class="sc">%&gt;%</span></span>
-<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">row_number</span>()<span class="sc">&lt;</span><span class="dv">6</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">row_number</span>()<span class="sc">&lt;</span><span class="dv">10</span>) <span class="sc">%&gt;%</span></span>
 <span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(symbol,average_expected_return,type) <span class="sc">%&gt;%</span></span>
 <span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 11 × 3
-# Groups:   type [3]
+<pre><code># A tibble: 18 × 3
+# Groups:   type [2]
    symbol average_expected_return type                     
    &lt;chr&gt;                    &lt;dbl&gt; &lt;chr&gt;                    
- 1 BIG                 0.000369   short-term mean reversion
- 2 TSE                 0.000367   short-term mean reversion
- 3 SSP                 0.000316   short-term mean reversion
- 4 FF                  0.000315   short-term mean reversion
- 5 AVD                 0.000315   short-term mean reversion
- 6 AAOI                0.000311   short-term momentum      
- 7 CRVL                0.000262   short-term momentum      
- 8 SENEA               0.000251   short-term momentum      
- 9 OSUR                0.000251   short-term momentum      
-10 CVGW                0.000246   short-term momentum      
-11 WWW                 0.00000775 long-term mean reversion </code></pre>
+ 1 CUTR                  0.000647 short-term mean reversion
+ 2 EBS                   0.000597 short-term mean reversion
+ 3 RMAX                  0.000488 short-term mean reversion
+ 4 VIAV                  0.000488 short-term mean reversion
+ 5 HMST                  0.000483 short-term mean reversion
+ 6 NEOG                  0.000435 short-term mean reversion
+ 7 DAR                   0.000432 short-term mean reversion
+ 8 ARR                   0.000425 short-term mean reversion
+ 9 PRAA                  0.000424 short-term mean reversion
+10 VSTO                  0.000295 short-term momentum      
+11 POWL                  0.000259 short-term momentum      
+12 FN                    0.000214 short-term momentum      
+13 ESE                   0.000208 short-term momentum      
+14 AMWD                  0.000206 short-term momentum      
+15 FSP                   0.000201 short-term momentum      
+16 ALRM                  0.000200 short-term momentum      
+17 PKE                   0.000199 short-term momentum      
+18 HWKN                  0.000199 short-term momentum      </code></pre>
 </div>
 </div>
 </section>
@@ -200,140 +215,163 @@ HTTP error 404.
 <div class="cell">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Fetch and prep sectors data</span></span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>tickers <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"XLRE"</span>,<span class="st">"XLY"</span>,<span class="st">"XLI"</span>,<span class="st">"XLB"</span>,<span class="st">"XLE"</span>,<span class="st">"XLF"</span>,<span class="st">"XLP"</span>,<span class="st">"XLV"</span>,<span class="st">"XLU"</span>,<span class="st">"XAR"</span>,<span class="st">"XBI"</span>,<span class="st">"XHB"</span>,<span class="st">"XME"</span>,<span class="st">"XTL"</span>,<span class="st">"XTN"</span>,<span class="st">"XSW"</span>,<span class="st">"XSD"</span>,<span class="st">"XLK"</span>,<span class="st">"XLC"</span>,<span class="st">"XRT"</span>,<span class="st">"KRE"</span>,<span class="st">"XES"</span>,<span class="st">"XOP"</span>,<span class="st">"KIE"</span>,<span class="st">"XWEB"</span>,<span class="st">"XPH"</span>,<span class="st">"XHS"</span>,<span class="st">"XHE"</span>)</span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">prep_data_for_forecasting</span>(tickers, <span class="at">include_today=</span><span class="cn">FALSE</span>)</span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Forecast returns using the combo of both indicators</span></span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">"sectors_ds_plotdata"</span>, <span class="at">package=</span><span class="st">"revertR"</span>)</span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>sectors_forecasts <span class="ot">&lt;-</span> <span class="fu">analyze_data</span>(df, ds_plotdata, <span class="st">"moving_average_z_score_stratum"</span>, <span class="st">"diff_z_score_stratum"</span>)</span>
-<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a><span class="co">#Classify and filter double strat results</span></span>
-<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a><span class="fu">classify_investment_thesis</span>(sectors_forecasts) <span class="sc">%&gt;%</span></span>
-<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(type) <span class="sc">%&gt;%</span></span>
-<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(average_expected_return)) <span class="sc">%&gt;%</span></span>
-<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">row_number</span>()<span class="sc">&lt;</span><span class="dv">6</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(symbol,average_expected_return,type) <span class="sc">%&gt;%</span></span>
-<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">prep_data_for_forecasting</span>(tickers, <span class="at">include_today=</span><span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: There was 1 warning in `dplyr::mutate()`.
+ℹ In argument: `data.. = purrr::map(...)`.
+Caused by warning:
+! x = 'XLB', get = 'stock.prices': Error in getSymbols.yahoo(Symbols = "XLB", env = &lt;environment&gt;, verbose = FALSE, : Unable to import "XLB".
+HTTP error 503.
+ Removing XLB.</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Forecast returns using the combo of both indicators</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">"sectors_ds_plotdata"</span>, <span class="at">package=</span><span class="st">"revertR"</span>)</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>sectors_forecasts <span class="ot">&lt;-</span> <span class="fu">analyze_data</span>(df, ds_plotdata, <span class="st">"moving_average_z_score_stratum"</span>, <span class="st">"diff_z_score_stratum"</span>)</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="co">#Classify and filter double strat results</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a><span class="fu">classify_investment_thesis</span>(sectors_forecasts) <span class="sc">%&gt;%</span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(type) <span class="sc">%&gt;%</span></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(average_expected_return)) <span class="sc">%&gt;%</span></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">row_number</span>()<span class="sc">&lt;</span><span class="dv">10</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(symbol,average_expected_return,type) <span class="sc">%&gt;%</span></span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 10 × 3
+<pre><code># A tibble: 14 × 3
 # Groups:   type [2]
    symbol average_expected_return type                     
    &lt;chr&gt;                    &lt;dbl&gt; &lt;chr&gt;                    
- 1 XHE                   0.000284 short-term mean reversion
- 2 XLU                   0.000241 short-term mean reversion
- 3 XLP                   0.000232 short-term mean reversion
- 4 XHS                   0.000226 short-term mean reversion
- 5 XLRE                  0.000199 short-term mean reversion
- 6 XLC                   0.000116 short-term momentum      
- 7 XLE                   0.000112 short-term momentum      
- 8 XPH                   0.000112 short-term momentum      
- 9 XES                   0.000110 short-term momentum      
-10 XHB                   0.000110 short-term momentum      </code></pre>
+ 1 XHE                   0.000340 short-term mean reversion
+ 2 XPH                   0.000318 short-term mean reversion
+ 3 XLY                   0.000316 short-term mean reversion
+ 4 XHB                   0.000314 short-term mean reversion
+ 5 XSD                   0.000308 short-term mean reversion
+ 6 XLU                   0.000291 short-term mean reversion
+ 7 XLP                   0.000286 short-term mean reversion
+ 8 XTL                   0.000284 short-term mean reversion
+ 9 XTN                   0.000263 short-term mean reversion
+10 XLC                   0.000115 short-term momentum      
+11 KIE                   0.000115 short-term momentum      
+12 XES                   0.000114 short-term momentum      
+13 XLE                   0.000109 short-term momentum      
+14 XOP                   0.000108 short-term momentum      </code></pre>
 </div>
 </div>
 </section>
 <section id="country-etfs" class="level2">
 <h2 class="anchored" data-anchor-id="country-etfs">Country ETFs</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Fetch and prep countries data</span></span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>tickers <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"FLLA"</span>,<span class="st">"FLEE"</span>,<span class="st">"FLFR"</span>,<span class="st">"FLAX"</span>,<span class="st">"FLIN"</span>,<span class="st">"FLKR"</span>,<span class="st">"FLSW"</span>,<span class="st">"FLTW"</span>,<span class="st">"EWO"</span>,<span class="st">"EIRL"</span>,<span class="st">"FLMX"</span>,<span class="st">"EWN"</span>,<span class="st">"ARGT"</span>,<span class="st">"ENOR"</span>,<span class="st">"GREK"</span>,<span class="st">"EUSA"</span>,<span class="st">"FLSA"</span>,<span class="st">"UAE"</span>,<span class="st">"EIS"</span>,<span class="st">"FLRU"</span>,<span class="st">"EWQ"</span>,<span class="st">"EDEN"</span>,<span class="st">"FLCA"</span>,<span class="st">"EWD"</span>,<span class="st">"FLIY"</span>,<span class="st">"FLZA"</span>,<span class="st">"FLGB"</span>,<span class="st">"FLAU"</span>,<span class="st">"EWP"</span>,<span class="st">"FLHK"</span>,<span class="st">"EWS"</span>,<span class="st">"FLJP"</span>,<span class="st">"PGAL"</span>,<span class="st">"EFNL"</span>,<span class="st">"THD"</span>,<span class="st">"FLGR"</span>,<span class="st">"GXG"</span>,<span class="st">"IDX"</span>,<span class="st">"FLBR"</span>,<span class="st">"EPHE"</span>,<span class="st">"QAT"</span>,<span class="st">"TUR"</span>,<span class="st">"ECH"</span>,<span class="st">"NGE"</span>,<span class="st">"ENZL"</span>,<span class="st">"EGPT"</span>,<span class="st">"EWM"</span>,<span class="st">"FLCH"</span>,<span class="st">"PAK"</span>,<span class="st">"EPU"</span>)</span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">prep_data_for_forecasting</span>(tickers, <span class="at">include_today=</span><span class="cn">FALSE</span>)</span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Forecast returns using the combo of both indicators</span></span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">"countries_ds_plotdata"</span>, <span class="at">package=</span><span class="st">"revertR"</span>)</span>
-<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>countries_forecasts <span class="ot">&lt;-</span> <span class="fu">analyze_data</span>(df, ds_plotdata, <span class="st">"moving_average_z_score_stratum"</span>, <span class="st">"diff_z_score_stratum"</span>)</span>
-<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a><span class="co">#Classify and filter double strat results</span></span>
-<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a><span class="fu">classify_investment_thesis</span>(countries_forecasts) <span class="sc">%&gt;%</span></span>
-<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(type) <span class="sc">%&gt;%</span></span>
-<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(average_expected_return)) <span class="sc">%&gt;%</span></span>
-<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">row_number</span>()<span class="sc">&lt;</span><span class="dv">6</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(symbol,average_expected_return,type) <span class="sc">%&gt;%</span></span>
-<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Fetch and prep countries data</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>tickers <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"FLLA"</span>,<span class="st">"FLEE"</span>,<span class="st">"FLFR"</span>,<span class="st">"FLAX"</span>,<span class="st">"FLIN"</span>,<span class="st">"FLKR"</span>,<span class="st">"FLSW"</span>,<span class="st">"FLTW"</span>,<span class="st">"EWO"</span>,<span class="st">"EIRL"</span>,<span class="st">"FLMX"</span>,<span class="st">"EWN"</span>,<span class="st">"ARGT"</span>,<span class="st">"ENOR"</span>,<span class="st">"GREK"</span>,<span class="st">"EUSA"</span>,<span class="st">"FLSA"</span>,<span class="st">"UAE"</span>,<span class="st">"EIS"</span>,<span class="st">"FLRU"</span>,<span class="st">"EWQ"</span>,<span class="st">"EDEN"</span>,<span class="st">"FLCA"</span>,<span class="st">"EWD"</span>,<span class="st">"FLIY"</span>,<span class="st">"FLZA"</span>,<span class="st">"FLGB"</span>,<span class="st">"FLAU"</span>,<span class="st">"EWP"</span>,<span class="st">"FLHK"</span>,<span class="st">"EWS"</span>,<span class="st">"FLJP"</span>,<span class="st">"PGAL"</span>,<span class="st">"EFNL"</span>,<span class="st">"THD"</span>,<span class="st">"FLGR"</span>,<span class="st">"GXG"</span>,<span class="st">"IDX"</span>,<span class="st">"FLBR"</span>,<span class="st">"EPHE"</span>,<span class="st">"QAT"</span>,<span class="st">"TUR"</span>,<span class="st">"ECH"</span>,<span class="st">"NGE"</span>,<span class="st">"ENZL"</span>,<span class="st">"EGPT"</span>,<span class="st">"EWM"</span>,<span class="st">"FLCH"</span>,<span class="st">"PAK"</span>,<span class="st">"EPU"</span>)</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">prep_data_for_forecasting</span>(tickers, <span class="at">include_today=</span><span class="cn">FALSE</span>)</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Forecast returns using the combo of both indicators</span></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">"countries_ds_plotdata"</span>, <span class="at">package=</span><span class="st">"revertR"</span>)</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>countries_forecasts <span class="ot">&lt;-</span> <span class="fu">analyze_data</span>(df, ds_plotdata, <span class="st">"moving_average_z_score_stratum"</span>, <span class="st">"diff_z_score_stratum"</span>)</span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a><span class="co">#Classify and filter double strat results</span></span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a><span class="fu">classify_investment_thesis</span>(countries_forecasts) <span class="sc">%&gt;%</span></span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(type) <span class="sc">%&gt;%</span></span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(average_expected_return)) <span class="sc">%&gt;%</span></span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">row_number</span>()<span class="sc">&lt;</span><span class="dv">10</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(symbol,average_expected_return,type) <span class="sc">%&gt;%</span></span>
+<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 10 × 3
+<pre><code># A tibble: 13 × 3
 # Groups:   type [2]
    symbol average_expected_return type                     
    &lt;chr&gt;                    &lt;dbl&gt; &lt;chr&gt;                    
- 1 EPHE                  0.000232 short-term mean reversion
- 2 EWD                   0.000232 short-term mean reversion
- 3 EWN                   0.000226 short-term mean reversion
- 4 FLTW                  0.000225 short-term mean reversion
- 5 FLSW                  0.000204 short-term mean reversion
- 6 PAK                   0.000200 short-term momentum      
- 7 EWM                   0.000115 short-term momentum      
- 8 FLIN                  0.000115 short-term momentum      
- 9 UAE                   0.000115 short-term momentum      
-10 GREK                  0.000114 short-term momentum      </code></pre>
+ 1 EIS                  0.000421  short-term mean reversion
+ 2 IDX                  0.000302  short-term mean reversion
+ 3 EWN                  0.000274  short-term mean reversion
+ 4 EFNL                 0.000265  short-term mean reversion
+ 5 EIRL                 0.000263  short-term mean reversion
+ 6 EDEN                 0.000263  short-term mean reversion
+ 7 QAT                  0.000263  short-term mean reversion
+ 8 TUR                  0.000259  short-term momentum      
+ 9 FLMX                 0.000233  short-term mean reversion
+10 ARGT                 0.000232  short-term mean reversion
+11 FLIN                 0.000115  short-term momentum      
+12 EGPT                 0.0000663 short-term momentum      
+13 PAK                  0.0000632 short-term momentum      </code></pre>
 </div>
 </div>
 </section>
 <section id="selected-bond-etfs" class="level2">
 <h2 class="anchored" data-anchor-id="selected-bond-etfs">Selected bond ETFs</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Fetch and prep bonds data</span></span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>tickers <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"VWOB"</span>,<span class="st">"SPSB"</span>,<span class="st">"IAGG"</span>,<span class="st">"HYEM"</span>,<span class="st">"BNDX"</span>,<span class="st">"BND"</span>,<span class="st">"TIP"</span>,<span class="st">"SPLB"</span>,<span class="st">"SPIB"</span>,<span class="st">"BSV"</span>,<span class="st">"GBF"</span>,<span class="st">"BIL"</span>,<span class="st">"SPTI"</span>,<span class="st">"VTEB"</span>,<span class="st">"SPHY"</span>,<span class="st">"PLW"</span>,<span class="st">"SPTL"</span>,<span class="st">"IGLB"</span>,<span class="st">"IGIB"</span>,<span class="st">"SPMB"</span>)</span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">prep_data_for_forecasting</span>(tickers, <span class="at">include_today=</span><span class="cn">FALSE</span>)</span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Forecast returns using the combo of both indicators</span></span>
-<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">"bonds_ds_plotdata"</span>, <span class="at">package=</span><span class="st">"revertR"</span>)</span>
-<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>bonds_forecasts <span class="ot">&lt;-</span> <span class="fu">analyze_data</span>(df, ds_plotdata, <span class="st">"moving_average_z_score_stratum"</span>, <span class="st">"diff_z_score_stratum"</span>)</span>
-<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a><span class="co">#Classify and filter double strat results</span></span>
-<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a><span class="fu">classify_investment_thesis</span>(bonds_forecasts) <span class="sc">%&gt;%</span></span>
-<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(type) <span class="sc">%&gt;%</span></span>
-<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(average_expected_return)) <span class="sc">%&gt;%</span></span>
-<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">row_number</span>()<span class="sc">&lt;</span><span class="dv">6</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(symbol,average_expected_return,type) <span class="sc">%&gt;%</span></span>
-<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Fetch and prep bonds data</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>tickers <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"VWOB"</span>,<span class="st">"SPSB"</span>,<span class="st">"IAGG"</span>,<span class="st">"HYEM"</span>,<span class="st">"BNDX"</span>,<span class="st">"BND"</span>,<span class="st">"TIP"</span>,<span class="st">"SPLB"</span>,<span class="st">"SPIB"</span>,<span class="st">"BSV"</span>,<span class="st">"GBF"</span>,<span class="st">"BIL"</span>,<span class="st">"SPTI"</span>,<span class="st">"VTEB"</span>,<span class="st">"SPHY"</span>,<span class="st">"SPTL"</span>,<span class="st">"IGLB"</span>,<span class="st">"IGIB"</span>,<span class="st">"SPMB"</span>)</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">prep_data_for_forecasting</span>(tickers, <span class="at">include_today=</span><span class="cn">FALSE</span>)</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Forecast returns using the combo of both indicators</span></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">"bonds_ds_plotdata"</span>, <span class="at">package=</span><span class="st">"revertR"</span>)</span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>bonds_forecasts <span class="ot">&lt;-</span> <span class="fu">analyze_data</span>(df, ds_plotdata, <span class="st">"moving_average_z_score_stratum"</span>, <span class="st">"diff_z_score_stratum"</span>)</span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a><span class="co">#Classify and filter double strat results</span></span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a><span class="fu">classify_investment_thesis</span>(bonds_forecasts) <span class="sc">%&gt;%</span></span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(type) <span class="sc">%&gt;%</span></span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(average_expected_return)) <span class="sc">%&gt;%</span></span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">row_number</span>()<span class="sc">&lt;</span><span class="dv">10</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(symbol,average_expected_return,type) <span class="sc">%&gt;%</span></span>
+<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 8 × 3
+<pre><code># A tibble: 11 × 3
 # Groups:   type [2]
-  symbol average_expected_return type                     
-  &lt;chr&gt;                    &lt;dbl&gt; &lt;chr&gt;                    
-1 TIP                   0.000232 short-term mean reversion
-2 PLW                   0.000201 short-term mean reversion
-3 SPTL                  0.000201 short-term mean reversion
-4 IGLB                  0.000200 short-term mean reversion
-5 SPLB                  0.000200 short-term mean reversion
-6 BIL                   0.000177 short-term momentum      
-7 SPSB                  0.000115 short-term momentum      
-8 SPHY                  0.000110 short-term momentum      </code></pre>
+   symbol average_expected_return type                     
+   &lt;chr&gt;                    &lt;dbl&gt; &lt;chr&gt;                    
+ 1 BND                   0.000488 short-term mean reversion
+ 2 SPMB                  0.000483 short-term mean reversion
+ 3 SPTL                  0.000477 short-term mean reversion
+ 4 GBF                   0.000383 short-term mean reversion
+ 5 IGLB                  0.000383 short-term mean reversion
+ 6 SPLB                  0.000383 short-term mean reversion
+ 7 IGIB                  0.000361 short-term mean reversion
+ 8 SPTI                  0.000310 short-term mean reversion
+ 9 SPHY                  0.000308 short-term mean reversion
+10 BIL                   0.000177 short-term momentum      
+11 SPSB                  0.000115 short-term momentum      </code></pre>
 </div>
 </div>
 </section>
 <section id="commodities-etfs" class="level2">
 <h2 class="anchored" data-anchor-id="commodities-etfs">Commodities ETFs</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Fetch and prep bonds data</span></span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>tickers <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"FTRI"</span>,<span class="st">"PICK"</span>,<span class="st">"CUT"</span>,<span class="st">"SRUUF"</span>,<span class="st">"SGDJ"</span>,<span class="st">"PPLT"</span>,<span class="st">"GLD"</span>,<span class="st">"SLV"</span>,<span class="st">"PALL"</span>,<span class="st">"UGA"</span>,<span class="st">"BNO"</span>,<span class="st">"USO"</span>,<span class="st">"UNG"</span>,<span class="st">"FUE"</span>,<span class="st">"CANE"</span>,<span class="st">"JO"</span>,<span class="st">"CORN"</span>,<span class="st">"GRU"</span>,<span class="st">"SOYB"</span>,<span class="st">"WEAT"</span>,<span class="st">"NIB"</span>,<span class="st">"REMX"</span>,<span class="st">"JJT"</span>,<span class="st">"SLX"</span>,<span class="st">"JJU"</span>,<span class="st">"JJC"</span>,<span class="st">"JJN"</span>,<span class="st">"DBE"</span>,<span class="st">"GSG"</span>,<span class="st">"DBB"</span>,<span class="st">"BCI"</span>,<span class="st">"DBA"</span>)</span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">prep_data_for_forecasting</span>(tickers, <span class="at">include_today=</span><span class="cn">FALSE</span>)</span>
-<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Forecast returns using the combo of both indicators</span></span>
-<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">"commodities_ds_plotdata"</span>, <span class="at">package=</span><span class="st">"revertR"</span>)</span>
-<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>commodities_forecasts <span class="ot">&lt;-</span> <span class="fu">analyze_data</span>(df, ds_plotdata, <span class="st">"moving_average_z_score_stratum"</span>, <span class="st">"diff_z_score_stratum"</span>)</span>
-<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a><span class="co">#Classify and filter double strat results</span></span>
-<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a><span class="fu">classify_investment_thesis</span>(commodities_forecasts) <span class="sc">%&gt;%</span></span>
-<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(type) <span class="sc">%&gt;%</span></span>
-<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(average_expected_return)) <span class="sc">%&gt;%</span></span>
-<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">row_number</span>()<span class="sc">&lt;</span><span class="dv">6</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(symbol,average_expected_return,type) <span class="sc">%&gt;%</span></span>
-<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Fetch and prep bonds data</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>tickers <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"FTRI"</span>,<span class="st">"PICK"</span>,<span class="st">"CUT"</span>,<span class="st">"SRUUF"</span>,<span class="st">"SGDJ"</span>,<span class="st">"PPLT"</span>,<span class="st">"GLD"</span>,<span class="st">"SLV"</span>,<span class="st">"PALL"</span>,<span class="st">"UGA"</span>,<span class="st">"BNO"</span>,<span class="st">"USO"</span>,<span class="st">"UNG"</span>,<span class="st">"FUE"</span>,<span class="st">"CANE"</span>,<span class="st">"JO"</span>,<span class="st">"CORN"</span>,<span class="st">"GRU"</span>,<span class="st">"SOYB"</span>,<span class="st">"WEAT"</span>,<span class="st">"NIB"</span>,<span class="st">"REMX"</span>,<span class="st">"JJT"</span>,<span class="st">"SLX"</span>,<span class="st">"JJU"</span>,<span class="st">"JJC"</span>,<span class="st">"JJN"</span>,<span class="st">"DBE"</span>,<span class="st">"GSG"</span>,<span class="st">"DBB"</span>,<span class="st">"BCI"</span>,<span class="st">"DBA"</span>)</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">prep_data_for_forecasting</span>(tickers, <span class="at">include_today=</span><span class="cn">FALSE</span>)</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Forecast returns using the combo of both indicators</span></span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">"commodities_ds_plotdata"</span>, <span class="at">package=</span><span class="st">"revertR"</span>)</span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>commodities_forecasts <span class="ot">&lt;-</span> <span class="fu">analyze_data</span>(df, ds_plotdata, <span class="st">"moving_average_z_score_stratum"</span>, <span class="st">"diff_z_score_stratum"</span>)</span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a><span class="co">#Classify and filter double strat results</span></span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a><span class="fu">classify_investment_thesis</span>(commodities_forecasts) <span class="sc">%&gt;%</span></span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(type) <span class="sc">%&gt;%</span></span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(average_expected_return)) <span class="sc">%&gt;%</span></span>
+<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">row_number</span>()<span class="sc">&lt;</span><span class="dv">10</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(symbol,average_expected_return,type) <span class="sc">%&gt;%</span></span>
+<span id="cb18-15"><a href="#cb18-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 10 × 3
+<pre><code># A tibble: 16 × 3
 # Groups:   type [2]
    symbol average_expected_return type                     
    &lt;chr&gt;                    &lt;dbl&gt; &lt;chr&gt;                    
- 1 CORN                  0.000232 short-term mean reversion
- 2 REMX                  0.000232 short-term mean reversion
- 3 WEAT                  0.000232 short-term mean reversion
- 4 PICK                  0.000166 short-term mean reversion
- 5 PALL                  0.000152 short-term mean reversion
- 6 UNG                   0.000115 short-term momentum      
- 7 SOYB                  0.000114 short-term momentum      
- 8 DBE                   0.000112 short-term momentum      
- 9 UGA                   0.000112 short-term momentum      
-10 BCI                   0.000110 short-term momentum      </code></pre>
+ 1 PALL                  0.000300 short-term mean reversion
+ 2 REMX                  0.000263 short-term mean reversion
+ 3 GLD                   0.000204 short-term mean reversion
+ 4 UGA                   0.000191 short-term mean reversion
+ 5 CUT                   0.000183 short-term mean reversion
+ 6 SOYB                  0.000166 short-term mean reversion
+ 7 UNG                   0.000160 short-term momentum      
+ 8 SLX                   0.000158 short-term mean reversion
+ 9 PPLT                  0.000138 short-term mean reversion
+10 SLV                   0.000133 short-term mean reversion
+11 BNO                   0.000110 short-term momentum      
+12 GSG                   0.000110 short-term momentum      
+13 DBE                   0.000109 short-term momentum      
+14 CANE                  0.000108 short-term momentum      
+15 USO                   0.000106 short-term momentum      
+16 CORN                  0.000105 short-term momentum      </code></pre>
 </div>
 </div>
 </section>

@@ -254,7 +254,7 @@ Bond ETFs exhibit lower beta and smaller volatility, so their mean reversion and
 ```{r}
 # Bond ETFs -----------------------------------------------------------------
 
-tickers <- c("SPLB","SPIB","BSV","GBF","BND","TIP","BIL","SPTI","PLW","SPTL","PHB","IGLB","IGIB","PFIG","WIP","PICB","PCY","BWZ","BWX","HYD","MLN","NYF","ITM","CMF","TFI","SHM","CWB","BKLN","SPMB")
+tickers <- c("TLT","SPLB","SPIB","BSV","GBF","BND","TIP","BIL","SPTI","SPTL","PHB","IGLB","IGIB","PFIG","WIP","PICB","PCY","BWZ","BWX","HYD","MLN","NYF","ITM","CMF","TFI","SHM","CWB","BKLN","SPMB")
 
 # Get data frame of price history and prep for analysis. Use 20-day return periods,
 # a 20-day moving average of z-scores, and a 2-year window for calculating beta.
