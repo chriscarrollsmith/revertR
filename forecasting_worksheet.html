@@ -129,10 +129,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(symbol,average_expected_return,type) <span class="sc">%&gt;%</span></span>
 <span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 18 × 3
-# Groups:   type [2]
+<pre><code># A tibble: 19 × 3
+# Groups:   type [3]
    symbol average_expected_return type                     
    &lt;chr&gt;                    &lt;dbl&gt; &lt;chr&gt;                    
+<<<<<<< HEAD
  1 EL                    0.000473 short-term mean reversion
  2 DISH                  0.000450 short-term mean reversion
  3 HSIC                  0.000448 short-term mean reversion
@@ -151,6 +152,27 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 16 PXD                   0.000183 short-term momentum      
 17 NOV                   0.000181 short-term momentum      
 18 NOC                   0.000178 short-term momentum      </code></pre>
+=======
+ 1 ALB                 0.000487   short-term mean reversion
+ 2 EXR                 0.000486   short-term mean reversion
+ 3 LUV                 0.000477   short-term mean reversion
+ 4 UDR                 0.000469   short-term mean reversion
+ 5 DHR                 0.000444   short-term mean reversion
+ 6 ADP                 0.000427   short-term mean reversion
+ 7 FMC                 0.000427   short-term mean reversion
+ 8 ALGN                0.000425   short-term mean reversion
+ 9 HAS                 0.000424   short-term mean reversion
+10 WU                  0.000325   short-term momentum      
+11 AMGN                0.000291   short-term momentum      
+12 LLY                 0.000259   short-term momentum      
+13 HES                 0.000204   short-term momentum      
+14 WDC                 0.000200   short-term momentum      
+15 HRB                 0.000194   short-term momentum      
+16 NOC                 0.000160   short-term momentum      
+17 EA                  0.000158   short-term momentum      
+18 NWS                 0.000158   short-term momentum      
+19 MKC                -0.00000409 long-term mean reversion </code></pre>
+>>>>>>> ed031b0f3c38e8ffe04528decc3cb911ea2ef449
 </div>
 </div>
 </section>
@@ -189,6 +211,7 @@ HTTP error 404.
 # Groups:   type [3]
    symbol average_expected_return type                     
    &lt;chr&gt;                    &lt;dbl&gt; &lt;chr&gt;                    
+<<<<<<< HEAD
  1 OMCL                 0.000612  short-term mean reversion
  2 EXPO                 0.000489  short-term mean reversion
  3 PETS                 0.000488  short-term mean reversion
@@ -208,6 +231,26 @@ HTTP error 404.
 17 PMT                  0.000175  short-term momentum      
 18 RRC                  0.000160  short-term momentum      
 19 CUTR                 0.0000279 long-term mean reversion </code></pre>
+=======
+ 1 B                     0.000587 short-term mean reversion
+ 2 SEDG                  0.000467 short-term mean reversion
+ 3 MXL                   0.000447 short-term mean reversion
+ 4 PRAA                  0.000439 short-term mean reversion
+ 5 EXPO                  0.000438 short-term mean reversion
+ 6 SGH                   0.000436 short-term mean reversion
+ 7 FORR                  0.000431 short-term mean reversion
+ 8 DORM                  0.000428 short-term mean reversion
+ 9 THRM                  0.000425 short-term mean reversion
+10 TTI                   0.000259 short-term momentum      
+11 FN                    0.000204 short-term momentum      
+12 DBI                   0.000203 short-term momentum      
+13 CEIX                  0.000202 short-term momentum      
+14 CLW                   0.000200 short-term momentum      
+15 PRA                   0.000200 short-term momentum      
+16 GEOS                  0.000192 short-term momentum      
+17 SCVL                  0.000183 short-term momentum      
+18 PBI                   0.000183 short-term momentum      </code></pre>
+>>>>>>> ed031b0f3c38e8ffe04528decc3cb911ea2ef449
 </div>
 </div>
 </section>
@@ -234,6 +277,7 @@ HTTP error 404.
 # Groups:   type [2]
    symbol average_expected_return type                     
    &lt;chr&gt;                    &lt;dbl&gt; &lt;chr&gt;                    
+<<<<<<< HEAD
  1 XLB                   0.000232 short-term mean reversion
  2 XBI                   0.000230 short-term mean reversion
  3 XSW                   0.000230 short-term mean reversion
@@ -245,6 +289,19 @@ HTTP error 404.
  9 XPH                   0.000209 short-term mean reversion
 10 XES                   0.000197 short-term momentum      
 11 XOP                   0.000181 short-term momentum      </code></pre>
+=======
+ 1 XSD                   0.000392 short-term mean reversion
+ 2 XPH                   0.000358 short-term mean reversion
+ 3 XLV                   0.000318 short-term mean reversion
+ 4 XTN                   0.000308 short-term mean reversion
+ 5 XHE                   0.000257 short-term mean reversion
+ 6 XLRE                  0.000253 short-term mean reversion
+ 7 XTL                   0.000251 short-term mean reversion
+ 8 XHS                   0.000245 short-term mean reversion
+ 9 KRE                   0.000234 short-term mean reversion
+10 XOP                   0.000114 short-term momentum      
+11 XES                   0.000112 short-term momentum      </code></pre>
+>>>>>>> ed031b0f3c38e8ffe04528decc3cb911ea2ef449
 </div>
 </div>
 </section>
@@ -267,10 +324,11 @@ HTTP error 404.
 <span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(symbol,average_expected_return,type) <span class="sc">%&gt;%</span></span>
 <span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 13 × 3
+<pre><code># A tibble: 11 × 3
 # Groups:   type [2]
    symbol average_expected_return type                     
    &lt;chr&gt;                    &lt;dbl&gt; &lt;chr&gt;                    
+<<<<<<< HEAD
  1 EIS                  0.000269  short-term mean reversion
  2 QAT                  0.000254  short-term mean reversion
  3 ENZL                 0.000238  short-term mean reversion
@@ -284,6 +342,19 @@ HTTP error 404.
 11 EWM                  0.0000962 short-term momentum      
 12 EGPT                 0.0000769 short-term momentum      
 13 PAK                  0.0000752 short-term momentum      </code></pre>
+=======
+ 1 EIS                  0.000284  short-term mean reversion
+ 2 FLKR                 0.000263  short-term mean reversion
+ 3 TUR                  0.000249  short-term mean reversion
+ 4 ENZL                 0.000241  short-term mean reversion
+ 5 THD                  0.000233  short-term mean reversion
+ 6 EPU                  0.000232  short-term mean reversion
+ 7 FLGR                 0.000232  short-term mean reversion
+ 8 EWQ                  0.000232  short-term mean reversion
+ 9 EDEN                 0.000232  short-term mean reversion
+10 EGPT                 0.000101  short-term momentum      
+11 PAK                  0.0000768 short-term momentum      </code></pre>
+>>>>>>> ed031b0f3c38e8ffe04528decc3cb911ea2ef449
 </div>
 </div>
 </section>
@@ -310,6 +381,7 @@ HTTP error 404.
 # Groups:   type [2]
    symbol average_expected_return type                     
    &lt;chr&gt;                    &lt;dbl&gt; &lt;chr&gt;                    
+<<<<<<< HEAD
  1 SPTL                  0.000283 short-term mean reversion
  2 BND                   0.000272 short-term mean reversion
  3 SPMB                  0.000268 short-term mean reversion
@@ -319,6 +391,17 @@ HTTP error 404.
  7 GBF                   0.000211 short-term mean reversion
  8 IGIB                  0.000209 short-term mean reversion
  9 SPTI                  0.000209 short-term mean reversion
+=======
+ 1 BND                   0.000284 short-term mean reversion
+ 2 IGLB                  0.000284 short-term mean reversion
+ 3 SPLB                  0.000284 short-term mean reversion
+ 4 SPTL                  0.000284 short-term mean reversion
+ 5 VTEB                  0.000284 short-term mean reversion
+ 6 GBF                   0.000276 short-term mean reversion
+ 7 IGIB                  0.000263 short-term mean reversion
+ 8 SPMB                  0.000254 short-term mean reversion
+ 9 TIP                   0.000241 short-term mean reversion
+>>>>>>> ed031b0f3c38e8ffe04528decc3cb911ea2ef449
 10 BIL                   0.000177 short-term momentum      
 11 BSV                   0.000150 short-term momentum      
 12 SPSB                  0.000101 short-term momentum      </code></pre>
@@ -348,6 +431,7 @@ HTTP error 404.
 # Groups:   type [2]
    symbol average_expected_return type                     
    &lt;chr&gt;                    &lt;dbl&gt; &lt;chr&gt;                    
+<<<<<<< HEAD
  1 PALL                  0.000273 short-term mean reversion
  2 REMX                  0.000232 short-term mean reversion
  3 DBE                   0.000200 short-term momentum      
@@ -366,6 +450,26 @@ HTTP error 404.
 16 WEAT                  0.000121 short-term mean reversion
 17 DBA                   0.000115 short-term momentum      
 18 FTRI                  0.000115 short-term mean reversion</code></pre>
+=======
+ 1 PALL                 0.000241  short-term mean reversion
+ 2 CUT                  0.000232  short-term mean reversion
+ 3 REMX                 0.000232  short-term mean reversion
+ 4 PICK                 0.000232  short-term mean reversion
+ 5 UGA                  0.000226  short-term mean reversion
+ 6 SLX                  0.000193  short-term mean reversion
+ 7 WEAT                 0.000164  short-term mean reversion
+ 8 SGDJ                 0.000122  short-term mean reversion
+ 9 BCI                  0.000115  short-term mean reversion
+10 DBE                  0.000115  short-term momentum      
+11 CORN                 0.000115  short-term momentum      
+12 USO                  0.000115  short-term momentum      
+13 GSG                  0.000114  short-term momentum      
+14 BNO                  0.000114  short-term momentum      
+15 DBA                  0.000114  short-term momentum      
+16 CANE                 0.000110  short-term momentum      
+17 UNG                  0.0000821 short-term momentum      
+18 GLD                  0.0000737 short-term momentum      </code></pre>
+>>>>>>> ed031b0f3c38e8ffe04528decc3cb911ea2ef449
 </div>
 </div>
 </section>
