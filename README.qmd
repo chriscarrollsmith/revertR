@@ -27,10 +27,22 @@ Thirdly, historical returns are no guarantee of future returns, and I haven't ye
 
 ## Installation
 
-To install `revertR`, use:
+Since `revertR` is a private repository, you will need to either clone the repo and install it from the local project folder using `devtools::install()` or use a personal access token to install from the Github repo.
+
+For the latter approach, you will first need to install Git, `devtools`, `usethis`, and `credentials`.
 
 ```{r eval=FALSE}
-devtools::install_github("chriscarrollsmith/revertR")
+# Set config
+usethis::use_git_config(user.name = "YourName", user.email = "your@mail.com")
+
+# Go to github page to generate token
+usethis::create_github_token() 
+
+# Paste your PAT into pop-up that follows...
+credentials::set_github_pat()
+
+# Install revertR from Github
+devtools::install_github("Promptly-Technologies-LLC/revertR")
 ```
 
 ## Analysis

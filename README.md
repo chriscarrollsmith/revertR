@@ -6,8 +6,7 @@ Christopher C. Smith
 ## Introduction
 
 `revertR` is an R package for forecasting asset returns based on
-momentum and mean-reversion effects. The package has basically two core
-modules:
+momentum and mean-reversion effects. The package has basically two core modules:
 
 1.  An analysis module, and
 
@@ -25,9 +24,7 @@ performed in that z-score range.
 Firstly, Yahoo! Finance no longer provides an up-to-date list of index
 tickers, so I need to find an alternate data source for that. Yahoo!
 Finance also no longer provides quotes for current market prices, so I
-also need to find an alternate data source for that. (I’ve added support
-for Alphavantage, but it’s very limited unless you pay for premium
-access.)
+also need to find an alternate data source for that. (I’ve added support for Alphavantage, but it’s very limited unless you pay for premium access.)
 
 Secondly, the datasets used for pre-calculating stock price returns by
 z-score are full of survivorship bias, and this is probably grossly
@@ -43,10 +40,22 @@ functions.
 
 ## Installation
 
-To install `revertR`, use:
+Since `revertR` is a private repository, you will need to either clone the repo and install it from the local project folder using `devtools::install()` or use a personal access token to install from the Github repo.
+
+For the latter approach, you will first need to install Git, `devtools`, `usethis`, and `credentials`. 
 
 ``` r
-devtools::install_github("chriscarrollsmith/revertR")
+# Set config
+usethis::use_git_config(user.name = "YourName", user.email = "your@mail.com")
+
+# Go to github page to generate token
+usethis::create_github_token() 
+
+# Paste your PAT into pop-up that follows...
+credentials::set_github_pat()
+
+# Install revertR from Github
+devtools::install_github("Promptly-Technologies-LLC/revertR")
 ```
 
 ## Analysis
