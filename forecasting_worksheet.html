@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.3.433">
+<meta name="generator" content="quarto-1.4.553">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -23,7 +23,7 @@ ul.task-list li input[type="checkbox"] {
 }
 /* CSS for syntax highlighting */
 pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span { line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
@@ -99,7 +99,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </div>
   
 
+
 </header>
+
 
 <section id="comprehensive-asset-screening-and-forecasting-worksheet" class="level1">
 <h1>Comprehensive asset screening and forecasting worksheet</h1>
@@ -129,50 +131,28 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(symbol,average_expected_return,type) <span class="sc">%&gt;%</span></span>
 <span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 19 × 3
-# Groups:   type [3]
+<pre><code># A tibble: 18 × 3
+# Groups:   type [2]
    symbol average_expected_return type                     
    &lt;chr&gt;                    &lt;dbl&gt; &lt;chr&gt;                    
-<<<<<<< HEAD
- 1 EL                    0.000473 short-term mean reversion
- 2 DISH                  0.000450 short-term mean reversion
- 3 HSIC                  0.000448 short-term mean reversion
- 4 ALB                   0.000433 short-term mean reversion
- 5 FTNT                  0.000391 short-term mean reversion
- 6 XRAY                  0.000373 short-term mean reversion
- 7 ALGN                  0.000365 short-term mean reversion
- 8 APD                   0.000353 short-term mean reversion
- 9 SJM                   0.000338 short-term mean reversion
-10 CI                    0.000239 short-term momentum      
-11 COP                   0.000198 short-term momentum      
-12 EOG                   0.000198 short-term momentum      
-13 MRO                   0.000198 short-term momentum      
-14 HAL                   0.000198 short-term momentum      
-15 HUM                   0.000183 short-term momentum      
-16 PXD                   0.000183 short-term momentum      
-17 NOV                   0.000181 short-term momentum      
-18 NOC                   0.000178 short-term momentum      </code></pre>
-=======
- 1 ALB                 0.000487   short-term mean reversion
- 2 EXR                 0.000486   short-term mean reversion
- 3 LUV                 0.000477   short-term mean reversion
- 4 UDR                 0.000469   short-term mean reversion
- 5 DHR                 0.000444   short-term mean reversion
- 6 ADP                 0.000427   short-term mean reversion
- 7 FMC                 0.000427   short-term mean reversion
- 8 ALGN                0.000425   short-term mean reversion
- 9 HAS                 0.000424   short-term mean reversion
-10 WU                  0.000325   short-term momentum      
-11 AMGN                0.000291   short-term momentum      
-12 LLY                 0.000259   short-term momentum      
-13 HES                 0.000204   short-term momentum      
-14 WDC                 0.000200   short-term momentum      
-15 HRB                 0.000194   short-term momentum      
-16 NOC                 0.000160   short-term momentum      
-17 EA                  0.000158   short-term momentum      
-18 NWS                 0.000158   short-term momentum      
-19 MKC                -0.00000409 long-term mean reversion </code></pre>
->>>>>>> ed031b0f3c38e8ffe04528decc3cb911ea2ef449
+ 1 LEG                   0.000438 short-term mean reversion
+ 2 SBUX                  0.000433 short-term mean reversion
+ 3 BAX                   0.000411 short-term mean reversion
+ 4 TRIP                  0.000409 short-term mean reversion
+ 5 MTD                   0.000389 short-term mean reversion
+ 6 AKAM                  0.000319 short-term mean reversion
+ 7 EXPE                  0.000317 short-term mean reversion
+ 8 VRSN                  0.000287 short-term mean reversion
+ 9 ULTA                  0.000283 short-term mean reversion
+10 SEE                   0.000189 short-term momentum      
+11 MKC                   0.000185 short-term momentum      
+12 PRGO                  0.000182 short-term momentum      
+13 HSY                   0.000176 short-term momentum      
+14 GPC                   0.000162 short-term momentum      
+15 KMB                   0.000162 short-term momentum      
+16 GE                    0.000160 short-term momentum      
+17 ATO                   0.000158 short-term momentum      
+18 NWL                   0.000158 short-term momentum      </code></pre>
 </div>
 </div>
 </section>
@@ -186,14 +166,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">prep_data_for_forecasting</span>(tickers, <span class="at">include_today=</span><span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
-<pre><code>Warning: There were 123 warnings in `dplyr::mutate()`.
+<pre><code>Warning: There were 135 warnings in `dplyr::mutate()`.
 The first warning was:
 ℹ In argument: `data.. = purrr::map(...)`.
 Caused by warning:
 ! x = 'CCMP', get = 'stock.prices': Error in getSymbols.yahoo(Symbols = "CCMP", env = &lt;environment&gt;, verbose = FALSE, : Unable to import "CCMP".
 HTTP error 404.
  Removing CCMP.
-ℹ Run `dplyr::last_dplyr_warnings()` to see the 122 remaining warnings.</code></pre>
+ℹ Run `dplyr::last_dplyr_warnings()` to see the 134 remaining warnings.</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Forecast returns using the combo of both indicators</span></span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">"sp600_ds_plotdata"</span>, <span class="at">package=</span><span class="st">"revertR"</span>)</span>
@@ -207,50 +187,28 @@ HTTP error 404.
 <span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(symbol,average_expected_return,type) <span class="sc">%&gt;%</span></span>
 <span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 19 × 3
-# Groups:   type [3]
+<pre><code># A tibble: 18 × 3
+# Groups:   type [2]
    symbol average_expected_return type                     
    &lt;chr&gt;                    &lt;dbl&gt; &lt;chr&gt;                    
-<<<<<<< HEAD
- 1 OMCL                 0.000612  short-term mean reversion
- 2 EXPO                 0.000489  short-term mean reversion
- 3 PETS                 0.000488  short-term mean reversion
- 4 HTLD                 0.000479  short-term mean reversion
- 5 AMN                  0.000467  short-term mean reversion
- 6 ASTE                 0.000458  short-term mean reversion
- 7 ADTN                 0.000445  short-term mean reversion
- 8 SANM                 0.000418  short-term mean reversion
- 9 RMAX                 0.000410  short-term mean reversion
-10 PUMP                 0.000206  short-term momentum      
-11 SXC                  0.000205  short-term momentum      
-12 RES                  0.000204  short-term momentum      
-13 GEOS                 0.000196  short-term momentum      
-14 CEIX                 0.000196  short-term momentum      
-15 CPE                  0.000183  short-term momentum      
-16 HCC                  0.000181  short-term momentum      
-17 PMT                  0.000175  short-term momentum      
-18 RRC                  0.000160  short-term momentum      
-19 CUTR                 0.0000279 long-term mean reversion </code></pre>
-=======
- 1 B                     0.000587 short-term mean reversion
- 2 SEDG                  0.000467 short-term mean reversion
- 3 MXL                   0.000447 short-term mean reversion
- 4 PRAA                  0.000439 short-term mean reversion
- 5 EXPO                  0.000438 short-term mean reversion
- 6 SGH                   0.000436 short-term mean reversion
- 7 FORR                  0.000431 short-term mean reversion
- 8 DORM                  0.000428 short-term mean reversion
- 9 THRM                  0.000425 short-term mean reversion
-10 TTI                   0.000259 short-term momentum      
-11 FN                    0.000204 short-term momentum      
-12 DBI                   0.000203 short-term momentum      
-13 CEIX                  0.000202 short-term momentum      
-14 CLW                   0.000200 short-term momentum      
-15 PRA                   0.000200 short-term momentum      
-16 GEOS                  0.000192 short-term momentum      
-17 SCVL                  0.000183 short-term momentum      
-18 PBI                   0.000183 short-term momentum      </code></pre>
->>>>>>> ed031b0f3c38e8ffe04528decc3cb911ea2ef449
+ 1 FWRD                  0.00140  short-term mean reversion
+ 2 EBS                   0.000545 short-term momentum      
+ 3 GPMT                  0.000393 short-term mean reversion
+ 4 TUP                   0.000390 short-term mean reversion
+ 5 AVD                   0.000382 short-term mean reversion
+ 6 BGS                   0.000379 short-term mean reversion
+ 7 MYE                   0.000377 short-term mean reversion
+ 8 MPAA                  0.000368 short-term mean reversion
+ 9 BIG                   0.000357 short-term mean reversion
+10 TTEC                  0.000333 short-term mean reversion
+11 HMN                   0.000296 short-term momentum      
+12 NPK                   0.000260 short-term momentum      
+13 PRFT                  0.000239 short-term momentum      
+14 GME                   0.000230 short-term momentum      
+15 FF                    0.000203 short-term momentum      
+16 HCI                   0.000200 short-term momentum      
+17 HCC                   0.000199 short-term momentum      
+18 ANIK                  0.000185 short-term momentum      </code></pre>
 </div>
 </div>
 </section>
@@ -273,35 +231,28 @@ HTTP error 404.
 <span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(symbol,average_expected_return,type) <span class="sc">%&gt;%</span></span>
 <span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 11 × 3
+<pre><code># A tibble: 18 × 3
 # Groups:   type [2]
    symbol average_expected_return type                     
    &lt;chr&gt;                    &lt;dbl&gt; &lt;chr&gt;                    
-<<<<<<< HEAD
- 1 XLB                   0.000232 short-term mean reversion
- 2 XBI                   0.000230 short-term mean reversion
- 3 XSW                   0.000230 short-term mean reversion
- 4 XLY                   0.000227 short-term mean reversion
- 5 XHB                   0.000226 short-term mean reversion
- 6 XSD                   0.000218 short-term mean reversion
- 7 XTL                   0.000218 short-term mean reversion
- 8 XLP                   0.000210 short-term mean reversion
- 9 XPH                   0.000209 short-term mean reversion
-10 XES                   0.000197 short-term momentum      
-11 XOP                   0.000181 short-term momentum      </code></pre>
-=======
- 1 XSD                   0.000392 short-term mean reversion
- 2 XPH                   0.000358 short-term mean reversion
- 3 XLV                   0.000318 short-term mean reversion
- 4 XTN                   0.000308 short-term mean reversion
- 5 XHE                   0.000257 short-term mean reversion
- 6 XLRE                  0.000253 short-term mean reversion
- 7 XTL                   0.000251 short-term mean reversion
- 8 XHS                   0.000245 short-term mean reversion
- 9 KRE                   0.000234 short-term mean reversion
-10 XOP                   0.000114 short-term momentum      
-11 XES                   0.000112 short-term momentum      </code></pre>
->>>>>>> ed031b0f3c38e8ffe04528decc3cb911ea2ef449
+ 1 XTL                   0.000209 short-term mean reversion
+ 2 XTN                   0.000193 short-term mean reversion
+ 3 XLK                   0.000183 short-term mean reversion
+ 4 XRT                   0.000149 short-term mean reversion
+ 5 XLY                   0.000137 short-term mean reversion
+ 6 XPH                   0.000132 short-term mean reversion
+ 7 XLRE                  0.000130 short-term mean reversion
+ 8 XSW                   0.000126 short-term mean reversion
+ 9 XBI                   0.000122 short-term mean reversion
+10 XLP                   0.000117 short-term momentum      
+11 XLE                   0.000115 short-term momentum      
+12 XME                   0.000113 short-term momentum      
+13 XLI                   0.000113 short-term momentum      
+14 XOP                   0.000113 short-term momentum      
+15 XES                   0.000112 short-term momentum      
+16 KRE                   0.000110 short-term momentum      
+17 XLB                   0.000109 short-term momentum      
+18 XHB                   0.000108 short-term momentum      </code></pre>
 </div>
 </div>
 </section>
@@ -309,7 +260,7 @@ HTTP error 404.
 <h2 class="anchored" data-anchor-id="country-etfs">Country ETFs</h2>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Fetch and prep countries data</span></span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>tickers <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"FLLA"</span>,<span class="st">"FLEE"</span>,<span class="st">"FLFR"</span>,<span class="st">"FLAX"</span>,<span class="st">"FLIN"</span>,<span class="st">"FLKR"</span>,<span class="st">"FLSW"</span>,<span class="st">"FLTW"</span>,<span class="st">"EWO"</span>,<span class="st">"EIRL"</span>,<span class="st">"FLMX"</span>,<span class="st">"EWN"</span>,<span class="st">"ARGT"</span>,<span class="st">"ENOR"</span>,<span class="st">"GREK"</span>,<span class="st">"EUSA"</span>,<span class="st">"FLSA"</span>,<span class="st">"UAE"</span>,<span class="st">"EIS"</span>,<span class="st">"FLRU"</span>,<span class="st">"EWQ"</span>,<span class="st">"EDEN"</span>,<span class="st">"FLCA"</span>,<span class="st">"EWD"</span>,<span class="st">"FLIY"</span>,<span class="st">"FLZA"</span>,<span class="st">"FLGB"</span>,<span class="st">"FLAU"</span>,<span class="st">"EWP"</span>,<span class="st">"FLHK"</span>,<span class="st">"EWS"</span>,<span class="st">"FLJP"</span>,<span class="st">"PGAL"</span>,<span class="st">"EFNL"</span>,<span class="st">"THD"</span>,<span class="st">"FLGR"</span>,<span class="st">"GXG"</span>,<span class="st">"IDX"</span>,<span class="st">"FLBR"</span>,<span class="st">"EPHE"</span>,<span class="st">"QAT"</span>,<span class="st">"TUR"</span>,<span class="st">"ECH"</span>,<span class="st">"NGE"</span>,<span class="st">"ENZL"</span>,<span class="st">"EGPT"</span>,<span class="st">"EWM"</span>,<span class="st">"FLCH"</span>,<span class="st">"PAK"</span>,<span class="st">"EPU"</span>)</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>tickers <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"FLLA"</span>,<span class="st">"FLEE"</span>,<span class="st">"FLAX"</span>,<span class="st">"FLIN"</span>,<span class="st">"FLKR"</span>,<span class="st">"FLSW"</span>,<span class="st">"FLTW"</span>,<span class="st">"EWO"</span>,<span class="st">"EIRL"</span>,<span class="st">"FLMX"</span>,<span class="st">"EWN"</span>,<span class="st">"ARGT"</span>,<span class="st">"ENOR"</span>,<span class="st">"GREK"</span>,<span class="st">"EUSA"</span>,<span class="st">"FLSA"</span>,<span class="st">"UAE"</span>,<span class="st">"EIS"</span>,<span class="st">"FLRU"</span>,<span class="st">"EWQ"</span>,<span class="st">"EDEN"</span>,<span class="st">"FLCA"</span>,<span class="st">"EWD"</span>,<span class="st">"FLIY"</span>,<span class="st">"FLZA"</span>,<span class="st">"FLGB"</span>,<span class="st">"FLAU"</span>,<span class="st">"EWP"</span>,<span class="st">"FLHK"</span>,<span class="st">"EWS"</span>,<span class="st">"FLJP"</span>,<span class="st">"PGAL"</span>,<span class="st">"EFNL"</span>,<span class="st">"THD"</span>,<span class="st">"FLGR"</span>,<span class="st">"GXG"</span>,<span class="st">"IDX"</span>,<span class="st">"FLBR"</span>,<span class="st">"EPHE"</span>,<span class="st">"QAT"</span>,<span class="st">"TUR"</span>,<span class="st">"ECH"</span>,<span class="st">"NGE"</span>,<span class="st">"ENZL"</span>,<span class="st">"EGPT"</span>,<span class="st">"EWM"</span>,<span class="st">"FLCH"</span>,<span class="st">"PAK"</span>,<span class="st">"EPU"</span>)</span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">prep_data_for_forecasting</span>(tickers, <span class="at">include_today=</span><span class="cn">FALSE</span>)</span>
 <span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Forecast returns using the combo of both indicators</span></span>
@@ -324,37 +275,28 @@ HTTP error 404.
 <span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(symbol,average_expected_return,type) <span class="sc">%&gt;%</span></span>
 <span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 11 × 3
+<pre><code># A tibble: 18 × 3
 # Groups:   type [2]
    symbol average_expected_return type                     
    &lt;chr&gt;                    &lt;dbl&gt; &lt;chr&gt;                    
-<<<<<<< HEAD
- 1 EIS                  0.000269  short-term mean reversion
- 2 QAT                  0.000254  short-term mean reversion
- 3 ENZL                 0.000238  short-term mean reversion
- 4 FLFR                 0.000231  short-term mean reversion
- 5 UAE                  0.000227  short-term mean reversion
- 6 EDEN                 0.000199  short-term mean reversion
- 7 FLSW                 0.000199  short-term mean reversion
- 8 EUSA                 0.000193  short-term mean reversion
- 9 IDX                  0.000193  short-term mean reversion
-10 GXG                  0.000115  short-term momentum      
-11 EWM                  0.0000962 short-term momentum      
-12 EGPT                 0.0000769 short-term momentum      
-13 PAK                  0.0000752 short-term momentum      </code></pre>
-=======
- 1 EIS                  0.000284  short-term mean reversion
- 2 FLKR                 0.000263  short-term mean reversion
- 3 TUR                  0.000249  short-term mean reversion
- 4 ENZL                 0.000241  short-term mean reversion
- 5 THD                  0.000233  short-term mean reversion
- 6 EPU                  0.000232  short-term mean reversion
- 7 FLGR                 0.000232  short-term mean reversion
- 8 EWQ                  0.000232  short-term mean reversion
- 9 EDEN                 0.000232  short-term mean reversion
-10 EGPT                 0.000101  short-term momentum      
-11 PAK                  0.0000768 short-term momentum      </code></pre>
->>>>>>> ed031b0f3c38e8ffe04528decc3cb911ea2ef449
+ 1 FLSA                 0.000228  short-term mean reversion
+ 2 FLJP                 0.000204  short-term mean reversion
+ 3 EPHE                 0.000193  short-term mean reversion
+ 4 EIRL                 0.000115  short-term momentum      
+ 5 FLBR                 0.000115  short-term mean reversion
+ 6 IDX                  0.000115  short-term mean reversion
+ 7 QAT                  0.000115  short-term mean reversion
+ 8 FLCA                 0.000115  short-term momentum      
+ 9 UAE                  0.000115  short-term mean reversion
+10 ENZL                 0.000115  short-term mean reversion
+11 GREK                 0.000115  short-term momentum      
+12 FLMX                 0.000113  short-term mean reversion
+13 FLIN                 0.000113  short-term momentum      
+14 FLGR                 0.000103  short-term momentum      
+15 ENOR                 0.000101  short-term momentum      
+16 EWQ                  0.0000994 short-term momentum      
+17 FLEE                 0.0000994 short-term momentum      
+18 EWD                  0.0000992 short-term momentum      </code></pre>
 </div>
 </div>
 </section>
@@ -377,34 +319,24 @@ HTTP error 404.
 <span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(symbol,average_expected_return,type) <span class="sc">%&gt;%</span></span>
 <span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 12 × 3
+<pre><code># A tibble: 14 × 3
 # Groups:   type [2]
    symbol average_expected_return type                     
    &lt;chr&gt;                    &lt;dbl&gt; &lt;chr&gt;                    
-<<<<<<< HEAD
- 1 SPTL                  0.000283 short-term mean reversion
- 2 BND                   0.000272 short-term mean reversion
- 3 SPMB                  0.000268 short-term mean reversion
- 4 IGLB                  0.000264 short-term mean reversion
- 5 SPLB                  0.000238 short-term mean reversion
- 6 VTEB                  0.000217 short-term mean reversion
- 7 GBF                   0.000211 short-term mean reversion
- 8 IGIB                  0.000209 short-term mean reversion
- 9 SPTI                  0.000209 short-term mean reversion
-=======
- 1 BND                   0.000284 short-term mean reversion
- 2 IGLB                  0.000284 short-term mean reversion
- 3 SPLB                  0.000284 short-term mean reversion
- 4 SPTL                  0.000284 short-term mean reversion
- 5 VTEB                  0.000284 short-term mean reversion
- 6 GBF                   0.000276 short-term mean reversion
- 7 IGIB                  0.000263 short-term mean reversion
- 8 SPMB                  0.000254 short-term mean reversion
- 9 TIP                   0.000241 short-term mean reversion
->>>>>>> ed031b0f3c38e8ffe04528decc3cb911ea2ef449
-10 BIL                   0.000177 short-term momentum      
-11 BSV                   0.000150 short-term momentum      
-12 SPSB                  0.000101 short-term momentum      </code></pre>
+ 1 SPMB                 0.000169  short-term mean reversion
+ 2 SPTL                 0.000132  short-term mean reversion
+ 3 IGLB                 0.000126  short-term mean reversion
+ 4 SPLB                 0.000126  short-term mean reversion
+ 5 BND                  0.000122  short-term mean reversion
+ 6 GBF                  0.000122  short-term mean reversion
+ 7 SPTI                 0.000122  short-term mean reversion
+ 8 SPSB                 0.000115  short-term momentum      
+ 9 HYEM                 0.000115  short-term momentum      
+10 BNDX                 0.000115  short-term mean reversion
+11 VTEB                 0.000115  short-term mean reversion
+12 SPHY                 0.000113  short-term momentum      
+13 VWOB                 0.000109  short-term momentum      
+14 BIL                  0.0000652 short-term momentum      </code></pre>
 </div>
 </div>
 </section>
@@ -427,49 +359,25 @@ HTTP error 404.
 <span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(symbol,average_expected_return,type) <span class="sc">%&gt;%</span></span>
 <span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 18 × 3
+<pre><code># A tibble: 15 × 3
 # Groups:   type [2]
    symbol average_expected_return type                     
    &lt;chr&gt;                    &lt;dbl&gt; &lt;chr&gt;                    
-<<<<<<< HEAD
- 1 PALL                  0.000273 short-term mean reversion
- 2 REMX                  0.000232 short-term mean reversion
- 3 DBE                   0.000200 short-term momentum      
- 4 GSG                   0.000198 short-term momentum      
- 5 BNO                   0.000198 short-term momentum      
- 6 USO                   0.000197 short-term momentum      
- 7 UNG                   0.000182 short-term momentum      
- 8 BCI                   0.000158 short-term momentum      
- 9 CORN                  0.000158 short-term mean reversion
-10 PPLT                  0.000158 short-term mean reversion
-11 SLV                   0.000158 short-term momentum      
-12 UGA                   0.000137 short-term mean reversion
-13 CUT                   0.000133 short-term mean reversion
-14 GLD                   0.000132 short-term momentum      
-15 PICK                  0.000121 short-term mean reversion
-16 WEAT                  0.000121 short-term mean reversion
-17 DBA                   0.000115 short-term momentum      
-18 FTRI                  0.000115 short-term mean reversion</code></pre>
-=======
- 1 PALL                 0.000241  short-term mean reversion
- 2 CUT                  0.000232  short-term mean reversion
- 3 REMX                 0.000232  short-term mean reversion
- 4 PICK                 0.000232  short-term mean reversion
- 5 UGA                  0.000226  short-term mean reversion
- 6 SLX                  0.000193  short-term mean reversion
- 7 WEAT                 0.000164  short-term mean reversion
- 8 SGDJ                 0.000122  short-term mean reversion
- 9 BCI                  0.000115  short-term mean reversion
-10 DBE                  0.000115  short-term momentum      
-11 CORN                 0.000115  short-term momentum      
-12 USO                  0.000115  short-term momentum      
-13 GSG                  0.000114  short-term momentum      
-14 BNO                  0.000114  short-term momentum      
-15 DBA                  0.000114  short-term momentum      
-16 CANE                 0.000110  short-term momentum      
-17 UNG                  0.0000821 short-term momentum      
-18 GLD                  0.0000737 short-term momentum      </code></pre>
->>>>>>> ed031b0f3c38e8ffe04528decc3cb911ea2ef449
+ 1 DBA                   0.000301 short-term momentum      
+ 2 CANE                  0.000235 short-term mean reversion
+ 3 PALL                  0.000208 short-term mean reversion
+ 4 UGA                   0.000201 short-term mean reversion
+ 5 PPLT                  0.000167 short-term momentum      
+ 6 DBE                   0.000115 short-term mean reversion
+ 7 PICK                  0.000115 short-term momentum      
+ 8 SLX                   0.000115 short-term mean reversion
+ 9 SOYB                  0.000115 short-term momentum      
+10 BNO                   0.000113 short-term momentum      
+11 GSG                   0.000113 short-term momentum      
+12 USO                   0.000113 short-term momentum      
+13 FTRI                  0.000112 short-term momentum      
+14 SGDJ                  0.000112 short-term momentum      
+15 UNG                   0.000112 short-term mean reversion</code></pre>
 </div>
 </div>
 </section>
@@ -556,10 +464,27 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     // clear code selection
     e.clearSelection();
   });
-  function tippyHover(el, contentFn) {
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
     const config = {
       allowHTML: true,
-      content: contentFn,
       maxWidth: 500,
       delay: 100,
       arrow: false,
@@ -569,8 +494,17 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       interactive: true,
       interactiveBorder: 10,
       theme: 'quarto',
-      placement: 'bottom-start'
+      placement: 'bottom-start',
     };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
     window.tippy(el, config); 
   }
   const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
@@ -582,7 +516,130 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       try { href = new URL(href).hash; } catch {}
       const id = href.replace(/^#\/?/, "");
       const note = window.document.getElementById(id);
-      return note.innerHTML;
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
     });
   }
       let selectedAnnoteEl;
@@ -626,6 +683,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
             }
             div.style.top = top - 2 + "px";
             div.style.height = height + 4 + "px";
+            div.style.left = 0;
             let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
             if (gutterDiv === null) {
               gutterDiv = window.document.createElement("div");
@@ -651,6 +709,32 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
         });
         selectedAnnoteEl = undefined;
       };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
       // Attach click handler to the DT
       const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
       for (const annoteDlNode of annoteDls) {
@@ -711,6 +795,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 });
 </script>
 </div> <!-- /content -->
+
 
 
 

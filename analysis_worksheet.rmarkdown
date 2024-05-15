@@ -5,11 +5,13 @@ format: html
 editor: visual
 ---
 
+
 # Comprehensive asset analysis worksheet
 
 This worksheet is designed for comprehensive analysis of momentum and mean reversion effects in various asset classes, using novel indicators that quantify mean reversion and momentum in terms of the price's z-score relationship to its exponential moving averages. Note that many model parameters can be adjusted. Run all cells in the document to complete the analysis. In addition to rendering plots and figures, this will also save plot data in the folder [/data](/data).
 
 This library and worksheet are works in progress. I have split the data for machine learning, but I have not yet attempted to validate the training results on the test data. I would also like to try some more traditional machine learning algorithms, like maybe a k-nearest neighbors (knn) algorithm. I also want to make use of my beta variable and add some additional variables, such as percentile rank and index-level z-score.
+
 
 ```{r message=FALSE}
 library(tidyverse)
@@ -18,9 +20,11 @@ library(revertR)
 options(scipen = 999)
 ```
 
+
 ## S&P 500
 
 Analysis of S&P 500 stocks reveals that mean reversion works best on short timeframes (20-day EMAs with 20-day returns), and momentum works best on long timeframes (1000-day EMAs with 1000-day returns). It also suggests that mean-reversion effects are stronger than momentum effects, though that may just be noise from survivorship bias.
+
 
 ```{r}
 # S&P 500 (Large Cap) -----------------------------------------------------
@@ -77,9 +81,11 @@ map2_dfr(.x = plotdata,
             n_of_trades = sum(n_of_trades))
 ```
 
+
 ## S&P 600
 
 Note that the mean reversion and momentum effects are much higher for these "small-cap" stocks; however, also note that there is likely stronger survivorship bias for the S&P 600, so this is partly just noise. Also, these stocks have higher beta (volatility) in general.
+
 
 ```{r messages=FALSE, warnings=FALSE}
 # S&P 600 (Small Cap) -----------------------------------------------------
@@ -136,9 +142,11 @@ map2_dfr(.x = plotdata,
             n_of_trades = sum(n_of_trades))
 ```
 
+
 ## Sector ETFs
 
 An analysis of US equal-weight sector ETFs should be less affected by survivorship bias, and thus more accurate. Note that these assets exhibit smaller effect sizes than we found in our analysis of individual stocks.
+
 
 ```{r}
 # Sector ETFs -----------------------------------------------------------------
@@ -192,9 +200,11 @@ map2_dfr(.x = plotdata,
             n_of_trades = sum(n_of_trades))
 ```
 
+
 ## Country ETFs
 
 Country ETFs can be a bit expensive to trade due to illiquidity and high expense ratios. The expense ratios are reflected in our data, but the illiquidity (i.e. trade execution cost) is not.
+
 
 ```{r}
 # Country ETFs -----------------------------------------------------------------
@@ -247,9 +257,11 @@ map2_dfr(.x = plotdata,
             n_of_trades = sum(n_of_trades))
 ```
 
+
 ## Bond ETFs
 
 Bond ETFs exhibit lower beta and smaller volatility, so their mean reversion and momentum effects are also smaller.
+
 
 ```{r}
 # Bond ETFs -----------------------------------------------------------------
@@ -303,11 +315,13 @@ map2_dfr(.x = plotdata,
             n_of_trades = sum(n_of_trades))
 ```
 
+
 ## Commodities ETFs
 
 Commodities ETFs tend to be futures ETFs. As a result, there's a lot of "negative carry," or "cost to own," in the form of contract fees and rollover costs. These are meant as vehicles for short-term speculation, not long-term investing. As a result, their returns are generally negative.
 
 As the plots show, this is also one of the only asset classes that exhibits downward momentum rather than upward mean reversion after a strong move to the downside.
+
 
 ```{r}
 # Commodities -----------------------------------------------------------------
@@ -360,3 +374,4 @@ map2_dfr(.x = plotdata,
   summarize(mean_return = sum(avg_potential_return*n_of_trades)/sum(n_of_trades),
             n_of_trades = sum(n_of_trades))
 ```
+

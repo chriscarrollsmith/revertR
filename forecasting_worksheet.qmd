@@ -80,7 +80,7 @@ classify_investment_thesis(sectors_forecasts) %>%
 
 ```{r}
 # Fetch and prep countries data
-tickers <- c("FLLA","FLEE","FLFR","FLAX","FLIN","FLKR","FLSW","FLTW","EWO","EIRL","FLMX","EWN","ARGT","ENOR","GREK","EUSA","FLSA","UAE","EIS","FLRU","EWQ","EDEN","FLCA","EWD","FLIY","FLZA","FLGB","FLAU","EWP","FLHK","EWS","FLJP","PGAL","EFNL","THD","FLGR","GXG","IDX","FLBR","EPHE","QAT","TUR","ECH","NGE","ENZL","EGPT","EWM","FLCH","PAK","EPU")
+tickers <- c("FLLA","FLEE","FLAX","FLIN","FLKR","FLSW","FLTW","EWO","EIRL","FLMX","EWN","ARGT","ENOR","GREK","EUSA","FLSA","UAE","EIS","FLRU","EWQ","EDEN","FLCA","EWD","FLIY","FLZA","FLGB","FLAU","EWP","FLHK","EWS","FLJP","PGAL","EFNL","THD","FLGR","GXG","IDX","FLBR","EPHE","QAT","TUR","ECH","NGE","ENZL","EGPT","EWM","FLCH","PAK","EPU")
 df <- prep_data_for_forecasting(tickers, include_today=FALSE)
 
 # Forecast returns using the combo of both indicators
